@@ -1,0 +1,46 @@
+<div id="userForm" class="bootstrap">
+    <div class="container">
+        <div class="list-group-item">
+            <div class="form-group">
+                <form>
+                    <p><label for="firstName">First name: <span class="required-symbol">*</span></label> <input id="firstName" class="form-control" type="text" ng-model="viewModel.currentUser.firstName"></p>
+                    <p><label for="lastName">Last name: </label> <input id="lastName" class="form-control" type="text" ng-model="viewModel.currentUser.lastName"></p>
+                    <p><label for="email">Email:</label> <input id="email" class="form-control" type="text" ng-model="viewModel.currentUser.email"> </p>            
+                    <p><label for="userName">Username:</label> <input id="userName" class="form-control" type="text" ng-model="viewModel.currentUser.userName"> </p>
+                    <p><label for="group">Group:</label> 
+                        <select id="group" class="form-control" data-ng-model="viewModel.currentUser.groupId" convert-to-number>
+                            <option value="">--Select a Group--</option>
+                            <option ng-repeat="group in viewModel.availableGroups track by group.id" value="{{group.id}}">{{group.name}}</option>
+                        </select>
+                    </p>
+
+                    <p><label for="role">Role:</label> 
+                        <select id="role" class="form-control" data-ng-model="viewModel.currentUser.role" convert-to-number>
+                            <option value="">--Select a Role--</option>
+                            <option value="0">Admin</option>
+                            <option value="1">Editor</option>
+                            <option value="2">View</option>
+                        </select>
+                    </p>
+
+                </form>				
+            </div>
+        
+
+            <button class="btn btn-default" ng-click="viewModel.addUser(viewModel.currentUser)">
+                <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Save</span>
+            </button>
+
+            <!--<a ng-if="path !== '/add'" ng-click="updateContact()">
+                <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Save</span>
+                </button>
+            </a>-->
+
+            <button class="btn btn-default" ng-click="viewModel.$location.path('/user')">
+                <span class="glyphicon glyphicon-remove"></span><span>&nbsp;Cancel</span>
+            </button>
+
+        </div>
+    </div>
+</div>

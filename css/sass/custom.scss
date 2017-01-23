@@ -1,0 +1,252 @@
+$rockstars-color1: #00A800;
+$rockstars-color2: #1E1E1F;
+
+$login-input-height: 28px;
+$gray80: #CCCCCC;
+
+div.bootstrap{
+    @import "bootstrap/stylesheets/bootstrap";
+}
+
+//GLOBAL
+// @font-face {
+//   font-family: upheavtt;
+//   src: url('/fonts/upheavtt.woff2') format('woff2');
+// }
+
+// * {
+//   font-family: upheavtt, sans-serif;
+// }
+
+body{
+    margin: 0px;
+}
+
+#myApp{
+    //NAVIGATION
+    #navigation{
+        .logo-img{
+            height: 40px;
+        }
+
+        .navbar-brand.logo{
+            padding-top: 5px;
+            padding-right: 40px;
+        }
+
+        .navbar-nav > li > a{
+            color: $rockstars-color1;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .navbar-nav > .active > a,
+        .navbar-nav > .active > a:hover,
+        .navbar-default .navbar-nav > .active > a:focus{
+            background-color: $rockstars-color1;
+            color: white;
+        }
+
+        .navbar-nav > li > a:hover,
+        .navbar-nav > li > a:focus {
+            color: white;
+        }
+
+    }
+    #navigation.navbar-default{
+        background-color: $rockstars-color2;
+        border-bottom-color: $rockstars-color1;
+        border-top: 0px;
+        border-left: 0px;
+        border-right: 0px;
+        border-radius: 0px;
+    }
+
+    //LOGIN SECTION
+    .login-container { 
+        position: absolute;
+        margin: auto;
+        top: 50%;
+        left: 50%;
+        margin-top: -99px; /*set to a negative number 1/2 of your height*/
+        margin-left: -210px; /*set to a negative number 1/2 of your width*/
+    }
+
+    .login-section{
+        width: 400px;
+        border: 1px solid $gray80;
+        border-radius: 4px;
+        margin: 0 auto;
+        padding: 10px;
+        background: $rockstars-color2;
+        color: white;
+
+        .header{
+            font-size: 20px;
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid $gray80;
+            color: $rockstars-color1;
+        }
+
+        .login-form{
+            margin-bottom: 0px;
+            
+            .input-row{
+
+                margin-top: 10px;
+
+                .label{
+                    float: left;
+                    width: 20%;
+                    text-align: right;
+                    height: $login-input-height;
+                    line-height: $login-input-height;
+                }
+
+                .input{
+                    float: left;
+                    width: 70%;
+                    padding-left: 30px;
+
+                    input{
+                        outline: none;
+                    }
+
+                    .input-text{
+                        width: 90%;
+                        height: $login-input-height;
+                        border-radius: 2px;
+                        border: 1px solid #CCC;                 
+                        padding: 10px;
+                    }
+                }
+
+                .margin-left-label{
+                    margin-left: 20%;
+                }
+
+                .login-btn{
+                    height: $login-input-height;
+                    width: 80px;
+                    background-color: $rockstars-color1;
+                    border: none;
+                    color: white;
+                    border-radius: 2px;
+                }
+            }
+
+            .input-row:after{
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+        }
+    }
+
+    .pointer{
+        cursor: pointer;
+    }
+
+    .navbar-log-out{
+        float: right;
+        padding: 15px 15px;
+        font-size: 18px;
+        line-height: 20px;
+        height: 50px;
+
+        .log-out-icon{
+            color: $rockstars-color1;
+
+            &:hover{
+                color: white;
+            }
+        }
+    }
+
+    //USER LIST
+    #userList {
+        .table-responsive{
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+        .action-row{
+            margin-bottom: 20px;
+        }
+
+        .search-section{
+            text-align: right;
+        }
+        .search-box{
+            border-radius: 6px;
+            border: 1px solid $gray80;
+            height: 32px;
+            line-height: 32px;
+            padding-left: 10px;
+            padding-right: 10px;
+            outline: none;
+        }
+        .align-center{
+            text-align: center;
+        }
+
+        .table-bordered > thead > tr > th,
+        .table-bordered > thead > tr > td {
+            border-bottom-width: 1px;
+            color: $rockstars-color1
+        }
+        .show-user{
+            display: inline;
+            width: auto;
+        }
+    }
+
+    //PAGING
+    .pagination > li > a,
+    .pagination > li > span{
+        color: $rockstars-color1;
+        border-color: $gray80;
+    }
+
+    .pagination > .active > a,
+    .pagination > .active > a:hover,
+    .pagination > .active > a:focus,
+    .pagination > .active > span,
+    .pagination > .active > span:hover,
+    .pagination > .active > span:focus{
+        background-color: $rockstars-color1;
+        color: white;
+    }
+
+    #userForm{
+        .list-group-item{
+            border: none;
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+    }
+
+    button, input{
+        outline: none;
+    }
+
+    .disbled-click-event{
+        pointer-events: none;
+    }
+
+    .form-control:focus{
+        border-color: $rockstars-color1;
+        outline: 0;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 168, 0, 0.6);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 168, 0, 0.6);
+    }
+
+}
+
+
+
+
+
+
+
