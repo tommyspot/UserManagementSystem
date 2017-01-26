@@ -4,6 +4,229 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/pouchdb/index.d.ts" />
+/// <reference path="../lib/pouchdb/pouch.d.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Service;
+    (function (Service) {
+        var PouchDBService = (function () {
+            function PouchDBService($q) {
+                this.$q = $q;
+                this.database = new PouchDB('UserDB');
+            }
+            PouchDBService.prototype.getAll = function (type) {
+                var defer = this.$q.defer();
+                this.database.allDocs({ include_docs: true, descending: true }, function (err, doc) {
+                    var entityList = [];
+                    for (var docRow = 0; docRow < doc.rows.length; docRow++) {
+                        var entityDoc = doc.rows[docRow].doc;
+                        if (entityDoc.type === type) {
+                            entityList.push(entityDoc);
+                        }
+                    }
+                    defer.resolve(entityList);
+                });
+                return defer.promise;
+            };
+            ;
+            PouchDBService.prototype.getEntityById = function (type, _id) {
+                var defer = this.$q.defer();
+                this.getAll(type).then(function (result) {
+                    for (var index = 0; index < result.length; index++) {
+                        var entity = result[index];
+                        if (entity._id === _id) {
+                            defer.resolve(entity);
+                        }
+                    }
+                }, function (reason) {
+                    defer.reject(reason);
+                });
+                return defer.promise;
+            };
+            ;
+            PouchDBService.prototype.updateEntity = function (entityInfo) {
+                var _this = this;
+                var defer = this.$q.defer();
+                this.database.get(entityInfo._id).then(function (doc) {
+                    if (entityInfo.type === Rockstars.Enum.EntityType.User) {
+                        var entity = entityInfo;
+                        return _this.database.put({
+                            _id: entity._id,
+                            _rev: entity._rev,
+                            type: entity.type,
+                            createdDate: entity.createdDate,
+                            firstName: entity.firstName,
+                            lastName: entity.lastName,
+                            email: entity.email,
+                            userName: entity.userName,
+                            password: entity.password,
+                            dateOfBirth: entity.dateOfBirth,
+                            groupId: entity.groupId,
+                            role: entity.role,
+                            notes: entity.notes
+                        });
+                    }
+                    else if (entityInfo.type === Rockstars.Enum.EntityType.Group) {
+                        var entity = entityInfo;
+                        return _this.database.put({
+                            _id: entity._id,
+                            _rev: entity._rev,
+                            type: entity.type,
+                            createdDate: entity.createdDate,
+                            name: entity.name
+                        });
+                    }
+                }).then(function (result) {
+                    // handle response
+                    defer.resolve(result);
+                })["catch"](function (reason) {
+                    //console.log(reason);
+                    defer.reject(reason);
+                });
+                return defer.promise;
+            };
+            ;
+            PouchDBService.prototype.deleteEntity = function (entity) {
+                var _this = this;
+                var defer = this.$q.defer();
+                this.database.get(entity._id).then(function (doc) {
+                    return _this.database.remove(doc._id, doc._rev);
+                }).then(function (result) {
+                    // handle result
+                    defer.resolve(result);
+                })["catch"](function (reason) {
+                    //console.log(reason);
+                    defer.reject(reason);
+                });
+                return defer.promise;
+            };
+            ;
+            PouchDBService.prototype.addEntity = function (entity) {
+                var defer = this.$q.defer();
+                this.database.post(entity).then(function (result) {
+                    // handle response
+                    defer.resolve(result);
+                })["catch"](function (reason) {
+                    //console.log(reason);
+                    defer.reject(reason);
+                });
+                return defer.promise;
+            };
+            ;
+            //realtime service
+            PouchDBService.prototype.autoLoadingOnChanged = function (callback) {
+                this.database.changes({
+                    since: 'now',
+                    live: true
+                }).on('change', callback);
+            };
+            return PouchDBService;
+        }());
+        Service.PouchDBService = PouchDBService;
+    })(Service = Rockstars.Service || (Rockstars.Service = {}));
+})(Rockstars || (Rockstars = {}));
+/// <reference path="../services/PouchDBService.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Helper;
+    (function (Helper) {
+        var ModelHelper = (function () {
+            function ModelHelper() {
+            }
+            // constructor(userList: Array<model.UserModel>) {
+            //     this.userList = userList;
+            // }
+            // getUserById(_id: string) {
+            //     for (let i = 0; i < this.userList.length; i++) {
+            //         var user = this.userList[i];
+            //         if (user._id === _id) {
+            //             return this.userList[i];
+            //         }
+            //     }
+            //     return null;
+            // }
+            ModelHelper.prototype.getUserRole = function (role) {
+                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
+                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
+            };
+            ModelHelper.prototype.formatCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
+            };
+            ModelHelper.prototype.formatShortCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString();
+            };
+            return ModelHelper;
+        }());
+        Helper.ModelHelper = ModelHelper;
+    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var BaseModel = (function () {
+            function BaseModel() {
+            }
+            return BaseModel;
+        }());
+        Model.BaseModel = BaseModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
+    var Enum;
+    (function (Enum) {
+        var EntityType;
+        (function (EntityType) {
+            EntityType[EntityType["User"] = 0] = "User";
+            EntityType[EntityType["Group"] = 1] = "Group";
+        })(EntityType = Enum.EntityType || (Enum.EntityType = {}));
+        var UserRole;
+        (function (UserRole) {
+            UserRole[UserRole["Admin"] = 0] = "Admin";
+            UserRole[UserRole["Editor"] = 1] = "Editor";
+            UserRole[UserRole["View"] = 2] = "View";
+        })(UserRole = Enum.UserRole || (Enum.UserRole = {}));
+    })(Enum = Rockstars.Enum || (Rockstars.Enum = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var GroupModel = (function (_super) {
+            __extends(GroupModel, _super);
+            function GroupModel() {
+                var _this = _super.call(this) || this;
+                _this.type = Rockstars.Enum.EntityType.Group;
+                return _this;
+            }
+            return GroupModel;
+        }(Model.BaseModel));
+        Model.GroupModel = GroupModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+})(Rockstars || (Rockstars = {}));
+/// <reference path="../model/BaseModel.ts" />
+/// <reference path="../model/Enum.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var UserModel = (function (_super) {
+            __extends(UserModel, _super);
+            function UserModel() {
+                var _this = _super.call(this) || this;
+                _this.type = Rockstars.Enum.EntityType.User;
+                return _this;
+            }
+            return UserModel;
+        }(Model.BaseModel));
+        Model.UserModel = UserModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+})(Rockstars || (Rockstars = {}));
+/// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 var Rockstars;
 (function (Rockstars) {
@@ -48,7 +271,7 @@ var Rockstars;
             NavigationController.prototype.initNavigation = function () {
                 var _this = this;
                 this.nav = {
-                    navItems: ['user', 'group'],
+                    navItems: ['user', 'group', 'configuration'],
                     selectedIndex: this.$location.path() == '/group' ? 1 : 0,
                     navClick: function ($index) {
                         _this.nav.selectedIndex = $index;
@@ -61,13 +284,19 @@ var Rockstars;
     })(Controller = Rockstars.Controller || (Rockstars.Controller = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../model/UserModel.ts" />
+/// <reference path="../model/GroupModel.ts" />
+/// <reference path="../services/PouchDBService.ts" />
+/// <reference path="../helpers/ModelHelper.ts" />
 var Rockstars;
 (function (Rockstars) {
     var Controller;
     (function (Controller) {
-        //import service = Clarity.Service;
+        var model = Rockstars.Model;
+        var service = Rockstars.Service;
+        var helper = Rockstars.Helper;
         var UserController = (function () {
-            function UserController($scope, $location, $window, $rootScope, $http, $q, $filter) {
+            function UserController($scope, $location, $window, $rootScope, $http, $q, $filter, $routeParams) {
                 this.$scope = $scope;
                 this.$location = $location;
                 this.$window = $window;
@@ -75,8 +304,10 @@ var Rockstars;
                 this.$http = $http;
                 this.$q = $q;
                 this.$filter = $filter;
+                this.$routeParams = $routeParams;
                 $scope.viewModel = this;
-                this.pouchDBService = new Rockstars.Service.PouchDBService($q);
+                this.pouchDBService = new service.PouchDBService($q);
+                this.modelHelper = new helper.ModelHelper();
                 this.pageSize = 5;
                 this.initPage();
                 var self = this;
@@ -84,35 +315,58 @@ var Rockstars;
                     if (self.userListTmp && self.userListTmp.length > 0) {
                         //self.userList = $filter('filter')(self.userListTmp, {userName: value});
                         self.userList = $filter('filter')(self.userListTmp, value);
-                        self.initPaging();
+                        self.initPagination();
                     }
                 });
             }
             UserController.prototype.initPage = function () {
-                if (this.$location.path() === '/user') {
-                    this.initUserList();
+                var _this = this;
+                var user_id = this.$routeParams.user_id;
+                if (user_id) {
+                    if (this.$location.path() === '/user/' + user_id) {
+                        this.pouchDBService.getEntityById(Rockstars.Enum.EntityType.User, user_id).then(function (entity) {
+                            _this.currentUser = entity;
+                        }, function (reason) { });
+                    }
+                    else if (this.$location.path() === '/user/edit/' + user_id) {
+                        this.pouchDBService.getEntityById(Rockstars.Enum.EntityType.User, user_id).then(function (entity) {
+                            _this.currentUser = entity;
+                            //temp
+                            _this.availableGroups = [
+                                { id: 1, name: 'Group A' },
+                                { id: 2, name: 'Group B' },
+                                { id: 3, name: 'Group C' }
+                            ];
+                        }, function (reason) { });
+                    }
                 }
-                else if (this.$location.path() === '/user/add') {
-                    this.currentUser = new Rockstars.Model.UserModel();
-                    this.availableGroups = [
-                        { id: 1, name: 'Group A' },
-                        { id: 2, name: 'Group B' },
-                        { id: 3, name: 'Group C' }
-                    ];
+                else {
+                    if (this.$location.path() === '/user') {
+                        this.initUserList();
+                    }
+                    else if (this.$location.path() === '/user/add') {
+                        this.currentUser = new model.UserModel();
+                        //temp
+                        this.availableGroups = [
+                            { id: 1, name: 'Group A' },
+                            { id: 2, name: 'Group B' },
+                            { id: 3, name: 'Group C' }
+                        ];
+                    }
                 }
             };
             UserController.prototype.initUserList = function () {
                 var _this = this;
-                this.pouchDBService.getAll('user').then(function (data) {
+                this.pouchDBService.getAll(Rockstars.Enum.EntityType.User).then(function (data) {
                     _this.userList = data;
                     _this.userList.sort(function (a, b) {
-                        return b.createdDate - a.createdDate;
+                        return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
                     });
                     _this.userListTmp = _this.userList;
-                    _this.initPaging();
+                    _this.initPagination();
                 }, function (reason) { });
             };
-            UserController.prototype.initPaging = function () {
+            UserController.prototype.initPagination = function () {
                 this.currentPage = 1;
                 this.numOfPages = this.userList.length % this.pageSize === 0 ?
                     this.userList.length / this.pageSize : Math.floor(this.userList.length / this.pageSize) + 1;
@@ -122,7 +376,7 @@ var Rockstars;
             };
             UserController.prototype.addUser = function (userModel) {
                 var _this = this;
-                userModel.createdDate = new Date();
+                userModel.createdDate = new Date().toString();
                 this.pouchDBService.addEntity(userModel).then(function (data) {
                     _this.$location.path('/user');
                 }, function (reason) { });
@@ -140,9 +394,6 @@ var Rockstars;
                         }
                     }
                 }
-            };
-            UserController.prototype.getUserRole = function (role) {
-                return role === 0 ? 'Admin' : (role === 1 ? 'Editor' : 'View');
             };
             UserController.prototype.getNumberPage = function () {
                 if (this.numOfPages > 0) {
@@ -179,145 +430,23 @@ var Rockstars;
                     user.isChecked = this.isCheckedAll;
                 }
             };
+            UserController.prototype.removeUserInDetail = function (user) {
+                var _this = this;
+                var confirmDialog = this.$window.confirm('Do you want to delete the user?');
+                if (confirmDialog) {
+                    this.pouchDBService.deleteEntity(user).then(function (data) {
+                        _this.$location.path('/user');
+                    }, function (reason) { });
+                }
+            };
+            UserController.prototype.updateUser = function (user) {
+                var _this = this;
+                this.pouchDBService.updateEntity(user).then(function (data) {
+                    _this.$location.path('/user');
+                }, function (reason) { });
+            };
             return UserController;
         }());
         Controller.UserController = UserController;
     })(Controller = Rockstars.Controller || (Rockstars.Controller = {}));
-})(Rockstars || (Rockstars = {}));
-/// <reference path="../lib/angularjs/angular.d.ts" />
-/// <reference path="../lib/pouchdb/index.d.ts" />
-/// <reference path="../lib/pouchdb/pouch.d.ts" />
-var Rockstars;
-(function (Rockstars) {
-    var Service;
-    (function (Service) {
-        var PouchDBService = (function () {
-            function PouchDBService($q) {
-                this.$q = $q;
-                this.database = new PouchDB('UserDB');
-            }
-            PouchDBService.prototype.getAll = function (type) {
-                var defer = this.$q.defer();
-                this.database.allDocs({ include_docs: true, descending: true }, function (err, doc) {
-                    var entityList = [];
-                    for (var docRow = 0; docRow < doc.rows.length; docRow++) {
-                        var entityDoc = doc.rows[docRow].doc;
-                        if (entityDoc.type === type) {
-                            entityList.push(entityDoc);
-                        }
-                    }
-                    defer.resolve(entityList);
-                });
-                return defer.promise;
-            };
-            ;
-            // update(contactInfo) {		
-            // 	var defer = this.$q.defer();
-            // 	this.database.get(contactInfo._id).then(function(doc) {
-            // 	  return this.database.put({
-            // 		_id: contactInfo._id,
-            // 		_rev: contactInfo._rev,
-            // 		firstName: contactInfo.firstName,
-            // 		lastName: contactInfo.lastName,
-            // 		email: contactInfo.email,
-            // 		phone: contactInfo.phone,
-            // 		url: contactInfo.url,
-            // 		notes: contactInfo.notes
-            // 	  });
-            // 	}).then(function(result) {
-            // 	  // handle response
-            // 	  defer.resolve(result);
-            // 	}).catch(function (reason) {
-            // 	  //console.log(reason);
-            // 	  defer.reject(reason);
-            // 	});
-            // 	return defer.promise;
-            // };
-            PouchDBService.prototype.deleteEntity = function (entity) {
-                var _this = this;
-                var defer = this.$q.defer();
-                this.database.get(entity._id).then(function (doc) {
-                    return _this.database.remove(doc._id, doc._rev);
-                }).then(function (result) {
-                    // handle result
-                    defer.resolve(result);
-                })["catch"](function (reason) {
-                    //console.log(reason);
-                    defer.reject(reason);
-                });
-                return defer.promise;
-            };
-            ;
-            PouchDBService.prototype.addEntity = function (entity) {
-                var defer = this.$q.defer();
-                this.database.post(entity).then(function (result) {
-                    // handle response
-                    defer.resolve(result);
-                })["catch"](function (reason) {
-                    //console.log(reason);
-                    defer.reject(reason);
-                });
-                return defer.promise;
-            };
-            ;
-            //realtime service
-            PouchDBService.prototype.autoLoadingOnChanged = function (callback) {
-                this.database.changes({
-                    since: 'now',
-                    live: true
-                }).on('change', callback);
-            };
-            return PouchDBService;
-        }());
-        Service.PouchDBService = PouchDBService;
-    })(Service = Rockstars.Service || (Rockstars.Service = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var BaseModel = (function () {
-            function BaseModel() {
-            }
-            return BaseModel;
-        }());
-        Model.BaseModel = BaseModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
-})(Rockstars || (Rockstars = {}));
-// export enum UserRole{
-//     Admin,
-//     Editor,
-//     View
-// } 
-var Rockstars;
-(function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var GroupModel = (function (_super) {
-            __extends(GroupModel, _super);
-            function GroupModel() {
-                var _this = _super.call(this) || this;
-                _this.type = 'group';
-                return _this;
-            }
-            return GroupModel;
-        }(Model.BaseModel));
-        Model.GroupModel = GroupModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var UserModel = (function (_super) {
-            __extends(UserModel, _super);
-            function UserModel() {
-                var _this = _super.call(this) || this;
-                _this.type = 'user';
-                return _this;
-            }
-            return UserModel;
-        }(Model.BaseModel));
-        Model.UserModel = UserModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
 })(Rockstars || (Rockstars = {}));

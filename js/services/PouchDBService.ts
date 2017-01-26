@@ -14,7 +14,7 @@ module Rockstars.Service {
 			this.database = new PouchDB('UserDB');
 		}
 
-		getAll(type: string) {
+		getAll(type: number) {
 			var defer = this.$q.defer();
 			this.database.allDocs({ include_docs: true, descending: true }, function (err: any, doc: any) {
 				var entityList = [];
@@ -29,30 +29,66 @@ module Rockstars.Service {
 			return defer.promise;
 		};
 
-		// update(contactInfo) {		
-		// 	var defer = this.$q.defer();
+		getEntityById(type: number, _id: string) {
+			var defer = this.$q.defer();
 
-		// 	this.database.get(contactInfo._id).then(function(doc) {
-		// 	  return this.database.put({
-		// 		_id: contactInfo._id,
-		// 		_rev: contactInfo._rev,
-		// 		firstName: contactInfo.firstName,
-		// 		lastName: contactInfo.lastName,
-		// 		email: contactInfo.email,
-		// 		phone: contactInfo.phone,
-		// 		url: contactInfo.url,
-		// 		notes: contactInfo.notes
-		// 	  });
-		// 	}).then(function(result) {
-		// 	  // handle response
-		// 	  defer.resolve(result);
-		// 	}).catch(function (reason) {
-		// 	  //console.log(reason);
-		// 	  defer.reject(reason);
-		// 	});
+			this.getAll(type).then((result: Array<Model.BaseModel>) => {
+				for (let index = 0; index < result.length; index++) {
+					let entity = result[index];
+					if (entity._id === _id) {
+						defer.resolve(entity);
+					}
+				}
+			}, (reason) => {
+				defer.reject(reason);
+			});
+			return defer.promise;
+		};
 
-		// 	return defer.promise;
-		// };
+		updateEntity(entityInfo: Model.BaseModel) {
+			var defer = this.$q.defer();
+
+			this.database.get(entityInfo._id).then(doc => {
+				
+				if (entityInfo.type === Enum.EntityType.User) {
+					let entity = <Model.UserModel>entityInfo;
+					return this.database.put({
+						_id: entity._id,
+						_rev: entity._rev,
+						type: entity.type,
+						createdDate: entity.createdDate,
+						firstName: entity.firstName,
+						lastName: entity.lastName,
+						email: entity.email,
+						userName: entity.userName,
+						password: entity.password,
+						dateOfBirth: entity.dateOfBirth,
+						groupId: entity.groupId,
+						role: entity.role,
+						notes: entity.notes
+					});
+
+				} else if (entityInfo.type === Enum.EntityType.Group) {
+					let entity = <Model.GroupModel>entityInfo;
+					return this.database.put({
+						_id: entity._id,
+						_rev: entity._rev,
+						type: entity.type,
+						createdDate: entity.createdDate,
+						name: entity.name
+					});
+				}
+
+			}).then(function (result) {
+				// handle response
+				defer.resolve(result);
+			}).catch(function (reason) {
+				//console.log(reason);
+				defer.reject(reason);
+			});
+
+			return defer.promise;
+		};
 
 		deleteEntity(entity: Rockstars.Model.BaseModel) {
 			var defer = this.$q.defer();

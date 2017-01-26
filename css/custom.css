@@ -5043,9 +5043,6 @@ body {
       display: table;
       clear: both; }
 
-#myApp .pointer {
-  cursor: pointer; }
-
 #myApp .navbar-log-out {
   float: right;
   padding: 15px 15px;
@@ -5107,6 +5104,18 @@ body {
   padding-left: 0px;
   padding-right: 0px; }
 
+#myApp #userInfo .avatar {
+  width: 80%;
+  margin-top: 40px; }
+
+#myApp #userInfo .user-info {
+  border: none;
+  padding: 0; }
+  #myApp #userInfo .user-info h2 {
+    margin-bottom: 20px;
+    color: #00A800;
+    font-weight: bold; }
+
 #myApp button, #myApp input {
   outline: none; }
 
@@ -5118,3 +5127,23 @@ body {
   outline: 0;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 168, 0, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 168, 0, 0.6); }
+
+#myApp .positive-btn {
+  color: #FFFFFF;
+  background-color: #00A800;
+  border: none; }
+  #myApp .positive-btn:hover {
+    background-color: #00E400; }
+
+#myApp .negative-btn {
+  color: #FFFFFF;
+  background-color: #1E1E1F;
+  border: none; }
+  #myApp .negative-btn:hover {
+    background-color: #3E3E40; }
+
+#myApp .bold-text {
+  font-weight: bold; }
+
+#myApp .pointer {
+  cursor: pointer; }

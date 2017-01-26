@@ -17,7 +17,7 @@ module Rockstars.Controller {
 
     initNavigation() {
         this.nav = {
-          navItems: ['user', 'group'],
+          navItems: ['user', 'group', 'configuration'],
           selectedIndex: this.$location.path() == '/group' ? 1 : 0,
           navClick: ($index: number) => {
             this.nav.selectedIndex = $index;

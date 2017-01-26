@@ -1,0 +1,36 @@
+<div id="userInfo" class="bootstrap">
+	<div class="container">
+
+		<div class="row">
+			<div class="col-md-3">
+				<img class="avatar" src="./img/logo.png" />
+			</div>
+			<div class="col-md-9">
+				<div class="list-group-item user-info">
+					<h2 class="text-center title-name">{{viewModel.currentUser.firstName}} {{viewModel.currentUser.lastName}}</h2>
+					<p><span class="bold-text">Username:</span> <span>{{viewModel.currentUser.userName}}</span></p>
+					<p><span class="bold-text">Email:</span> <a ng-href="mailto:{{currentUser.email}}"><span>{{viewModel.currentUser.email}}</span></a></p>
+					<p><span class="bold-text">Date of birth:</span> <span>{{viewModel.currentUser.userName}}</span></p>
+					<p><span class="bold-text">User role:</span> <span>{{viewModel.modelHelper.getUserRole(viewModel.currentUser.role)}}</span></p>
+					<p><span class="bold-text">Group:</span> <span>{{viewModel.currentUser.groupId}}</span></p>
+					<p><span class="bold-text">Created date:</span> <span>{{viewModel.modelHelper.formatShortCreatedDate(viewModel.currentUser.createdDate)}}</span></p>
+					<p><span class="bold-text">Notes:</span></p>
+					<p class="well well-lg">{{viewModel.currentUser.notes}}</p>
+
+					<button class="btn btn-default negative-btn" data-ng-click="viewModel.$location.path('/user')">
+						<span class="glyphicon glyphicon-arrow-left"></span><span>&nbsp;Back</span>
+					</button>
+					
+					<button class="btn btn-default negative-btn" data-ng-click="viewModel.$location.path('/user/edit/' + viewModel.currentUser._id)">
+						<span class="glyphicon glyphicon-pencil"></span><span>&nbsp;Edit</span>
+					</button>
+
+					<button class="btn btn-default negative-btn" ng-click="viewModel.removeUserInDetail(viewModel.currentUser)">
+						<span class="glyphicon glyphicon-remove"></span><span>&nbsp;Remove</span>
+					</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>

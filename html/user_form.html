@@ -23,21 +23,25 @@
                         </select>
                     </p>
 
+                    <p><label for="role">Notes:</label> 
+                        <textarea class="form-control" data-ng-model="viewModel.currentUser.notes" rows="3"></textarea>
+                    </p>
+
                 </form>				
             </div>
         
 
-            <button class="btn btn-default" ng-click="viewModel.addUser(viewModel.currentUser)">
+            <button class="btn btn-default positive-btn" data-ng-if="viewModel.$location.path() === '/user/add'" 
+                ng-click="viewModel.addUser(viewModel.currentUser)">
                 <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Save</span>
             </button>
 
-            <!--<a ng-if="path !== '/add'" ng-click="updateContact()">
-                <button class="btn btn-default">
-                    <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Save</span>
-                </button>
-            </a>-->
+            <button class="btn btn-default positive-btn" data-ng-if="viewModel.$location.path() === '/user/edit/' + viewModel.currentUser._id" 
+                ng-click="viewModel.updateUser(viewModel.currentUser)">
+                <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Update</span>
+            </button>
 
-            <button class="btn btn-default" ng-click="viewModel.$location.path('/user')">
+            <button class="btn btn-default negative-btn" ng-click="viewModel.$location.path('/user')">
                 <span class="glyphicon glyphicon-remove"></span><span>&nbsp;Cancel</span>
             </button>
 

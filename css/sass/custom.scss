@@ -1,5 +1,11 @@
 $rockstars-color1: #00A800;
 $rockstars-color2: #1E1E1F;
+$rockstars-color3: #FFFFFF;
+
+
+$rockstars-hover-color1: #00E400;
+$rockstars-hover-color2: #3E3E40;
+
 
 $login-input-height: 28px;
 $gray80: #CCCCCC;
@@ -145,10 +151,6 @@ body{
         }
     }
 
-    .pointer{
-        cursor: pointer;
-    }
-
     .navbar-log-out{
         float: right;
         padding: 15px 15px;
@@ -227,6 +229,23 @@ body{
         }
     }
 
+    #userInfo{
+        .avatar{
+            width: 80%;
+            margin-top: 40px;
+        }
+        .user-info{
+            border: none;
+            padding: 0;
+
+            h2{
+                margin-bottom: 20px;
+                color: $rockstars-color1;
+                font-weight: bold;
+            }
+        }
+    }
+
     button, input{
         outline: none;
     }
@@ -242,6 +261,31 @@ body{
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 168, 0, 0.6);
     }
 
+    //BUTTON
+    .positive-btn{
+        color: $rockstars-color3;
+        background-color: $rockstars-color1;
+        border: none;
+        &:hover{
+            background-color: $rockstars-hover-color1;
+        }
+    }
+    .negative-btn{
+        color: $rockstars-color3;
+        background-color: $rockstars-color2;
+        border: none;
+        &:hover{
+            background-color: $rockstars-hover-color2;
+        }
+    }
+
+    .bold-text{
+        font-weight: bold;
+    }
+    
+    .pointer{
+        cursor: pointer;
+    }
 }
 
 

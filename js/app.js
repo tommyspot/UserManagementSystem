@@ -19,6 +19,10 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies'])
 		  templateUrl: '/html/user_detail.html',
 		  controller: 'UserController'
 		})
+		.when('/user/edit/:user_id', {
+		  templateUrl: '/html/user_form.html',
+		  controller: 'UserController'
+		})
 		.when('/group', {
 			templateUrl: '/html/group.html',
 			controller: 'GroupController'

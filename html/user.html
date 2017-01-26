@@ -41,15 +41,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr data-ng-repeat="user in viewModel.getUserListOnPage()"
+                        <tr class="pointer" data-ng-repeat="user in viewModel.getUserListOnPage()"
                             data-ng-click="viewModel.$location.path('/user/' + user._id)">
-                            <td class="align-center"><input type="checkbox" data-ng-model="user.isChecked" /></td>
+                            <td class="align-center" data-ng-click="$event.stopPropagation();"><input type="checkbox" data-ng-model="user.isChecked" /></td>
                             <td class="align-center">{{user.firstName}} {{user.lastName}}</td>
                             <td class="align-center">{{user.userName}}</td>
                             <td class="align-center">{{user.email}}</td>
-                            <td class="align-center">{{viewModel.getUserRole(user.role)}}</td>
+                            <td class="align-center">{{viewModel.modelHelper.getUserRole(user.role)}}</td>
                             <td class="align-center">{{user.groupId}}</td>
-                            <td class="align-center">{{user.createdDate.toDateString()}} {{user.createdDate.toLocaleTimeString()}}</td>
+                            <td class="align-center">{{viewModel.modelHelper.formatCreatedDate(user.createdDate)}}</td>
                         </tr>
                     </tbody>
                 </table>

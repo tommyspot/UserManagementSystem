@@ -1,11 +1,17 @@
 /// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../model/UserModel.ts" />
+/// <reference path="../model/GroupModel.ts" />
+/// <reference path="../services/PouchDBService.ts" />
+/// <reference path="../helpers/ModelHelper.ts" />
 
 module Rockstars.Controller {
   import model = Rockstars.Model;
-  //import service = Clarity.Service;
+  import service = Rockstars.Service;
+  import helper = Rockstars.Helper;
 
   export class UserController {
-    public pouchDBService: Rockstars.Service.PouchDBService;
+    public pouchDBService: service.PouchDBService;
+    public modelHelper: helper.ModelHelper;
     public userList: Array<model.UserModel>;
     public userListTmp: Array<model.UserModel>;
     public currentUser: model.UserModel;
@@ -22,65 +28,87 @@ module Rockstars.Controller {
       private $rootScope: ng.IRootScopeService,
       private $http: ng.IHttpService,
       private $q: ng.IQService,
-      private $filter: ng.IFilterService) {
+      private $filter: ng.IFilterService,
+      private $routeParams: any) {
 
       $scope.viewModel = this;
-      this.pouchDBService = new Rockstars.Service.PouchDBService($q);
+      this.pouchDBService = new service.PouchDBService($q);
+      this.modelHelper = new helper.ModelHelper();
+
       this.pageSize = 5;
       this.initPage();
 
       var self = this;
-      $scope.$watch('searchText', function(value)
-      { 
-        if(self.userListTmp && self.userListTmp.length >0){
+      $scope.$watch('searchText', function (value) {
+        if (self.userListTmp && self.userListTmp.length > 0) {
           //self.userList = $filter('filter')(self.userListTmp, {userName: value});
           self.userList = $filter('filter')(self.userListTmp, value);
-          self.initPaging();
+          self.initPagination();
         }
       });
-
-
     }
 
     initPage() {
+      var user_id = this.$routeParams.user_id;
 
-      if (this.$location.path() === '/user') {//User list
-        this.initUserList();
+      if (user_id) {
+        if (this.$location.path() === '/user/' + user_id) { //User Info
+          this.pouchDBService.getEntityById(Enum.EntityType.User, user_id).then((entity: model.UserModel) => {
+            this.currentUser = entity;
+          }, (reason) => { });
         
-      } else if (this.$location.path() === '/user/add') { //Add user
-        this.currentUser = new Rockstars.Model.UserModel();
-        this.availableGroups = [
-          { id: 1, name: 'Group A' },
-          { id: 2, name: 'Group B' },
-          { id: 3, name: 'Group C' }
-        ];
+      } else if(this.$location.path() === '/user/edit/' + user_id){//Edit User
+          this.pouchDBService.getEntityById(Enum.EntityType.User, user_id).then((entity: model.UserModel) => {
+            this.currentUser = entity;
+            //temp
+            this.availableGroups = [
+              { id: 1, name: 'Group A' },
+              { id: 2, name: 'Group B' },
+              { id: 3, name: 'Group C' }
+            ];
+          }, (reason) => { });
+        }
+      
+    } else {
+        if (this.$location.path() === '/user') { //User
+          this.initUserList();
+
+        } else if (this.$location.path() === '/user/add') { //Add User
+          this.currentUser = new model.UserModel();
+          //temp
+          this.availableGroups = [
+            { id: 1, name: 'Group A' },
+            { id: 2, name: 'Group B' },
+            { id: 3, name: 'Group C' }
+          ];
+        }
       }
     }
 
     initUserList() {
-      this.pouchDBService.getAll('user').then((data: Array<model.UserModel>) => {
+      this.pouchDBService.getAll(Enum.EntityType.User).then((data: Array<model.UserModel>) => {
         this.userList = data;
-        this.userList.sort(function(a: any,b: any){
-          return b.createdDate - a.createdDate;
+        this.userList.sort(function (a: any, b: any) {
+          return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
         });
         this.userListTmp = this.userList;
-        this.initPaging();
+        this.initPagination();
       }, (reason) => { }
       );
     }
 
-    initPaging(){   
+    initPagination() {
       this.currentPage = 1;
       this.numOfPages = this.userList.length % this.pageSize === 0 ?
-                            this.userList.length/this.pageSize : Math.floor(this.userList.length/this.pageSize) + 1;
+        this.userList.length / this.pageSize : Math.floor(this.userList.length / this.pageSize) + 1;
     }
 
     directToUserForm() {
       this.$location.path('/user/add');
     }
 
-    addUser(userModel: Rockstars.Model.UserModel) {
-      userModel.createdDate = new Date();
+    addUser(userModel: model.UserModel) {
+      userModel.createdDate = new Date().toString();
 
       this.pouchDBService.addEntity(userModel).then((data) => {
         this.$location.path('/user');
@@ -89,7 +117,7 @@ module Rockstars.Controller {
 
     removeUser() {
       var confirmDialog = this.$window.confirm('Do you want to delete the user?');
-      if(confirmDialog){
+      if (confirmDialog) {
         for (let i = 0; i < this.userList.length; i++) {
           var user = this.userList[i];
           if (user.isChecked) {
@@ -98,52 +126,62 @@ module Rockstars.Controller {
             }, (reason) => { });
           }
         }
-      }      
-    }
-
-    getUserRole(role: number) {
-      return role === 0 ? 'Admin' : (role === 1 ? 'Editor' : 'View');
+      }
     }
 
     getNumberPage() {
-      if(this.numOfPages > 0){
-        return new Array(this.numOfPages);   
+      if (this.numOfPages > 0) {
+        return new Array(this.numOfPages);
       }
-      return new Array(0);   
+      return new Array(0);
     }
 
-    goToPage(pageIndex: number){
+    goToPage(pageIndex: number) {
       this.currentPage = pageIndex;
     }
 
-    goToPreviousPage(){
-      if(this.currentPage > 1) {
+    goToPreviousPage() {
+      if (this.currentPage > 1) {
         this.currentPage--;
         this.goToPage(this.currentPage);
       }
     }
-    goToNextPage(){
-      if(this.currentPage < this.numOfPages) {
+    goToNextPage() {
+      if (this.currentPage < this.numOfPages) {
         this.currentPage++;
         this.goToPage(this.currentPage);
       }
     }
 
-    getUserListOnPage(){
-      if(this.userList && this.userList.length > 0) {
-        var startIndex = this.pageSize * (this.currentPage - 1);  
+    getUserListOnPage() {
+      if (this.userList && this.userList.length > 0) {
+        var startIndex = this.pageSize * (this.currentPage - 1);
         var endIndex = startIndex + this.pageSize;
         return this.userList.slice(startIndex, endIndex);
       }
     }
 
-    selectAllUsersOnPage(){
+    selectAllUsersOnPage() {
       var userOnPage = this.getUserListOnPage();
-      for(let index = 0; index < userOnPage.length; index++){
+      for (let index = 0; index < userOnPage.length; index++) {
         var user = userOnPage[index];
         user.isChecked = this.isCheckedAll;
       }
+    }
 
+    removeUserInDetail(user: model.UserModel) {
+      var confirmDialog = this.$window.confirm('Do you want to delete the user?');
+      if (confirmDialog) {
+          this.pouchDBService.deleteEntity(user).then((data) => {
+            this.$location.path('/user');
+          }, (reason) => { });
+      }
+    }
+
+    updateUser(user: model.UserModel){
+      this.pouchDBService.updateEntity(user).then((data) => {
+        this.$location.path('/user');
+      }, (reason) => { });
     }
 
   }

@@ -1,19 +1,21 @@
+/// <reference path="../model/BaseModel.ts" />
+/// <reference path="../model/Enum.ts" />
 
 module Rockstars.Model {
     export class UserModel extends BaseModel{
-        public id: number;
-        public email: string;
-        public password: string;
-        public userName: string;
         public firstName: string;
         public lastName: string;
+        public email: string;
+        public userName: string;
+        public password: string;
         public dateOfBirth: string;
         public groupId: number;
         public role: number;
+        public notes: string;
 
         constructor() {
             super();
-            this.type = 'user';
+            this.type =  Enum.EntityType.User;
         }
     }
 }
