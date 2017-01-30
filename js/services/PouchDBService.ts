@@ -75,7 +75,8 @@ module Rockstars.Service {
 						_rev: entity._rev,
 						type: entity.type,
 						createdDate: entity.createdDate,
-						name: entity.name
+						name: entity.name,
+						notes: entity.notes
 					});
 				}
 

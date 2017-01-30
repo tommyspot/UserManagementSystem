@@ -7,10 +7,15 @@
                     <p><label for="lastName">Last name: </label> <input id="lastName" class="form-control" type="text" ng-model="viewModel.currentUser.lastName"></p>
                     <p><label for="email">Email:</label> <input id="email" class="form-control" type="text" ng-model="viewModel.currentUser.email"> </p>            
                     <p><label for="userName">Username:</label> <input id="userName" class="form-control" type="text" ng-model="viewModel.currentUser.userName"> </p>
-                    <p><label for="group">Group:</label> 
-                        <select id="group" class="form-control" data-ng-model="viewModel.currentUser.groupId" convert-to-number>
+                    <p><label for="dateOfBirth">Date of birth:</label>
+                        <datepicker class="date-picker" date-format="MMMM dd yyyy">
+                            <input id="dateOfBirth" class="form-control" type="text" ng-model="viewModel.currentUser.dateOfBirth">
+                        </datepicker>
+                    </p>
+                    <p><label for="group">Group:</label>
+                        <select id="group" class="form-control" data-ng-model="viewModel.currentUser.groupId">
                             <option value="">--Select a Group--</option>
-                            <option ng-repeat="group in viewModel.availableGroups track by group.id" value="{{group.id}}">{{group.name}}</option>
+                            <option ng-repeat="group in viewModel.availableGroups track by group._id" value="{{group._id}}">{{group.name}}</option>
                         </select>
                     </p>
 

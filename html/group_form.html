@@ -1,0 +1,30 @@
+<div id="groupForm" class="bootstrap">
+    <div class="container">
+        <div class="list-group-item">
+            <div class="form-group">
+                <form>
+                    <p><label for="name">Name: <span class="required-symbol">*</span></label> <input id="name" class="form-control" type="text" ng-model="viewModel.currentGroup.name"></p>
+                    <p><label for="role">Notes:</label> 
+                        <textarea class="form-control" data-ng-model="viewModel.currentGroup.notes" rows="3"></textarea>
+                    </p>
+                </form>				
+            </div>
+        
+
+            <button class="btn btn-default positive-btn" data-ng-if="viewModel.$location.path() === '/group/add'" 
+                ng-click="viewModel.addGroup(viewModel.currentGroup)">
+                <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Save</span>
+            </button>
+
+            <button class="btn btn-default positive-btn" data-ng-if="viewModel.$location.path() === '/group/edit/' + viewModel.currentGroup._id" 
+                ng-click="viewModel.updateGroup(viewModel.currentGroup)">
+                <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Update</span>
+            </button>
+
+            <button class="btn btn-default negative-btn" ng-click="viewModel.$location.path('/group')">
+                <span class="glyphicon glyphicon-remove"></span><span>&nbsp;Cancel</span>
+            </button>
+
+        </div>
+    </div>
+</div>

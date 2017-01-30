@@ -1,4 +1,4 @@
-<div id="userList" class="bootstrap">
+<div id="groupList" class="bootstrap">
     <div class="container">
         <div class="row action-row">
             <div class="col-md-9 action-section">
@@ -10,17 +10,17 @@
                         <option value="99999">All</option>
                     </select>
                 </span>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.directToUserForm()">
+                <button type="button" class="btn btn-default" data-ng-click="viewModel.directToGroupForm()">
                     <span class="glyphicon glyphicon-plus"></span>
-                    <span>Add User</span>
+                    <span>Add Group</span>
                 </button>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.removeUser()">
+                <button type="button" class="btn btn-default" data-ng-click="viewModel.removeGroup()">
                     <span class="glyphicon glyphicon-trash"></span>
-                    <span>Remove User</span>
+                    <span>Remove Group</span>
                 </button>
             </div>
             <div class="col-md-3 search-section">
-                <input class="search-box" type="text" data-ng-change="viewModel.filterUserList(searchText)" data-ng-model="searchText" placeholder="Search" />
+                <input class="search-box" type="text" data-ng-change="viewModel.filterGroupList(searchText)" data-ng-model="searchText" placeholder="Search" />
             </div>
         </div>
 
@@ -31,38 +31,28 @@
                     <thead>
                         <tr>
                             <th class="align-center"><input type="checkbox" data-ng-model="viewModel.isCheckedAll"
-                            data-ng-change="viewModel.selectAllUsersOnPage()" /></th>
+                            data-ng-change="viewModel.selectAllGroupsOnPage()" /></th>
                             <th class="align-center">Name</th>
-                            <th class="align-center">Username</th>
-                            <th class="align-center">Email</th>
-                            <th class="align-center">Role</th>
-                            <th class="align-center">Group</th>
-                            <th class="align-center">Created Date</th>
+                            <th class="align-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="pointer" data-ng-repeat="user in viewModel.getUserListOnPage()"
-                            data-ng-click="viewModel.$location.path('/user/' + user._id)">
-                            <td class="align-center" data-ng-click="$event.stopPropagation();"><input type="checkbox" data-ng-model="user.isChecked" /></td>
-                            <td class="align-center">{{user.firstName}} {{user.lastName}}</td>
-                            <td class="align-center">{{user.userName}}</td>
-                            <td class="align-center">{{user.email}}</td>
-                            <td class="align-center">{{viewModel.modelHelper.getUserRole(user.role)}}</td>
-                            <td class="align-center">{{viewModel.modelHelper.getGroupName(user.groupId)}}</td>
-                            <td class="align-center">{{viewModel.modelHelper.formatCreatedDate(user.createdDate)}}</td>
+                        <tr class="pointer" data-ng-repeat="group in viewModel.getGroupListOnPage()">
+                            <td class="align-center" data-ng-click="$event.stopPropagation();"><input type="checkbox" data-ng-model="group.isChecked" /></td>
+                            <td class="align-center">{{group.name}}</td>
+                            <td class="align-center">
+                                <button class="btn btn-default negative-btn" ng-click="viewModel.$location.path('/group/edit/' + group._id)">
+                                    <span class="glyphicon glyphicon-edit"></span><span>&nbsp;Edit</span>
+                                </button>
+                                <button class="btn btn-default negative-btn" ng-click="viewModel.removeOneGroup(group)">
+                                    <span class="glyphicon glyphicon-remove"></span><span>&nbsp;Remove</span>
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <!--<div class="col-md-12 text-center">
-                <ul class="pagination">
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                </ul>
-            </div>-->
+
             <nav aria-label="navigation" data-ng-if="viewModel.numOfPages > 0">
                 <ul class="pagination">
                     <li class="pointer" ng-class="{'disabled': viewModel.currentPage === 1}"

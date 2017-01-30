@@ -9,7 +9,7 @@ module Rockstars.Model {
         public userName: string;
         public password: string;
         public dateOfBirth: string;
-        public groupId: number;
+        public groupId: string;
         public role: number;
         public notes: string;
 

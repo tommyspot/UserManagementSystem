@@ -3,6 +3,107 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var Rockstars;
+(function (Rockstars) {
+    var Enum;
+    (function (Enum) {
+        var EntityType;
+        (function (EntityType) {
+            EntityType[EntityType["User"] = 0] = "User";
+            EntityType[EntityType["Group"] = 1] = "Group";
+        })(EntityType = Enum.EntityType || (Enum.EntityType = {}));
+        var UserRole;
+        (function (UserRole) {
+            UserRole[UserRole["Admin"] = 0] = "Admin";
+            UserRole[UserRole["Editor"] = 1] = "Editor";
+            UserRole[UserRole["View"] = 2] = "View";
+        })(UserRole = Enum.UserRole || (Enum.UserRole = {}));
+    })(Enum = Rockstars.Enum || (Rockstars.Enum = {}));
+})(Rockstars || (Rockstars = {}));
+/// <reference path="../model/Enum.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Helper;
+    (function (Helper) {
+        var ModelHelper = (function () {
+            function ModelHelper(userList, groupList) {
+                this.userList = userList;
+                this.groupList = groupList;
+            }
+            ModelHelper.prototype.getUserRole = function (role) {
+                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
+                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
+            };
+            ModelHelper.prototype.formatCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
+            };
+            ModelHelper.prototype.formatShortCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString();
+            };
+            ModelHelper.prototype.getGroupName = function (_id) {
+                if (this.groupList && this.groupList.length > 0) {
+                    for (var index = 0; index < this.groupList.length; index++) {
+                        var group = this.groupList[index];
+                        if (group._id === _id) {
+                            return group.name;
+                        }
+                    }
+                }
+                return '';
+            };
+            return ModelHelper;
+        }());
+        Helper.ModelHelper = ModelHelper;
+    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var BaseModel = (function () {
+            function BaseModel() {
+            }
+            return BaseModel;
+        }());
+        Model.BaseModel = BaseModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var GroupModel = (function (_super) {
+            __extends(GroupModel, _super);
+            function GroupModel() {
+                var _this = _super.call(this) || this;
+                _this.type = Rockstars.Enum.EntityType.Group;
+                return _this;
+            }
+            return GroupModel;
+        }(Model.BaseModel));
+        Model.GroupModel = GroupModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+})(Rockstars || (Rockstars = {}));
+/// <reference path="../model/BaseModel.ts" />
+/// <reference path="../model/Enum.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var UserModel = (function (_super) {
+            __extends(UserModel, _super);
+            function UserModel() {
+                var _this = _super.call(this) || this;
+                _this.type = Rockstars.Enum.EntityType.User;
+                return _this;
+            }
+            return UserModel;
+        }(Model.BaseModel));
+        Model.UserModel = UserModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+})(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/pouchdb/index.d.ts" />
 /// <reference path="../lib/pouchdb/pouch.d.ts" />
@@ -74,7 +175,8 @@ var Rockstars;
                             _rev: entity._rev,
                             type: entity.type,
                             createdDate: entity.createdDate,
-                            name: entity.name
+                            name: entity.name,
+                            notes: entity.notes
                         });
                     }
                 }).then(function (result) {
@@ -126,105 +228,152 @@ var Rockstars;
         Service.PouchDBService = PouchDBService;
     })(Service = Rockstars.Service || (Rockstars.Service = {}));
 })(Rockstars || (Rockstars = {}));
+/// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../model/UserModel.ts" />
+/// <reference path="../model/GroupModel.ts" />
 /// <reference path="../services/PouchDBService.ts" />
+/// <reference path="../helpers/ModelHelper.ts" />
 var Rockstars;
 (function (Rockstars) {
-    var Helper;
-    (function (Helper) {
-        var ModelHelper = (function () {
-            function ModelHelper() {
+    var Controller;
+    (function (Controller) {
+        var model = Rockstars.Model;
+        var service = Rockstars.Service;
+        var helper = Rockstars.Helper;
+        var GroupController = (function () {
+            function GroupController($scope, $location, $window, $rootScope, $http, $q, $filter, $routeParams) {
+                this.$scope = $scope;
+                this.$location = $location;
+                this.$window = $window;
+                this.$rootScope = $rootScope;
+                this.$http = $http;
+                this.$q = $q;
+                this.$filter = $filter;
+                this.$routeParams = $routeParams;
+                $scope.viewModel = this;
+                this.pouchDBService = new service.PouchDBService($q);
+                this.modelHelper = new helper.ModelHelper();
+                this.pageSize = 5;
+                this.initPage();
+                var self = this;
+                $scope.$watch('searchText', function (value) {
+                    if (self.groupListTmp && self.groupListTmp.length > 0) {
+                        self.groupList = $filter('filter')(self.groupListTmp, value);
+                        self.initPagination();
+                    }
+                });
             }
-            // constructor(userList: Array<model.UserModel>) {
-            //     this.userList = userList;
-            // }
-            // getUserById(_id: string) {
-            //     for (let i = 0; i < this.userList.length; i++) {
-            //         var user = this.userList[i];
-            //         if (user._id === _id) {
-            //             return this.userList[i];
-            //         }
-            //     }
-            //     return null;
-            // }
-            ModelHelper.prototype.getUserRole = function (role) {
-                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
-                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
+            GroupController.prototype.initPage = function () {
+                var _this = this;
+                var group_id = this.$routeParams.group_id;
+                if (group_id) {
+                    if (this.$location.path() === '/group/edit/' + group_id) {
+                        this.pouchDBService.getEntityById(Rockstars.Enum.EntityType.Group, group_id).then(function (entity) {
+                            _this.currentGroup = entity;
+                        }, function (reason) { });
+                    }
+                }
+                else {
+                    if (this.$location.path() === '/group') {
+                        this.initGroupList();
+                    }
+                    else if (this.$location.path() === '/group/add') {
+                        this.currentGroup = new model.GroupModel();
+                    }
+                }
             };
-            ModelHelper.prototype.formatCreatedDate = function (date) {
-                var dateObject = new Date(date);
-                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
+            GroupController.prototype.initGroupList = function () {
+                var _this = this;
+                this.pouchDBService.getAll(Rockstars.Enum.EntityType.Group).then(function (data) {
+                    _this.groupList = data;
+                    _this.groupListTmp = _this.groupList;
+                    _this.initPagination();
+                }, function (reason) { });
             };
-            ModelHelper.prototype.formatShortCreatedDate = function (date) {
-                var dateObject = new Date(date);
-                return dateObject.toDateString();
+            GroupController.prototype.initPagination = function () {
+                this.currentPage = 1;
+                this.numOfPages = this.groupList.length % this.pageSize === 0 ?
+                    this.groupList.length / this.pageSize : Math.floor(this.groupList.length / this.pageSize) + 1;
             };
-            return ModelHelper;
+            GroupController.prototype.directToGroupForm = function () {
+                this.$location.path('/group/add');
+            };
+            GroupController.prototype.addGroup = function (groupModel) {
+                var _this = this;
+                this.pouchDBService.addEntity(groupModel).then(function (data) {
+                    _this.$location.path('/group');
+                }, function (reason) { });
+            };
+            GroupController.prototype.removeGroup = function () {
+                var _this = this;
+                var confirmDialog = this.$window.confirm('Do you want to delete the group?');
+                if (confirmDialog) {
+                    for (var i = 0; i < this.groupList.length; i++) {
+                        var group = this.groupList[i];
+                        if (group.isChecked) {
+                            this.pouchDBService.deleteEntity(group).then(function (data) {
+                                _this.initGroupList();
+                            }, function (reason) { });
+                        }
+                    }
+                }
+            };
+            GroupController.prototype.getNumberPage = function () {
+                if (this.numOfPages > 0) {
+                    return new Array(this.numOfPages);
+                }
+                return new Array(0);
+            };
+            GroupController.prototype.goToPage = function (pageIndex) {
+                this.currentPage = pageIndex;
+            };
+            GroupController.prototype.goToPreviousPage = function () {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                    this.goToPage(this.currentPage);
+                }
+            };
+            GroupController.prototype.goToNextPage = function () {
+                if (this.currentPage < this.numOfPages) {
+                    this.currentPage++;
+                    this.goToPage(this.currentPage);
+                }
+            };
+            GroupController.prototype.getGroupListOnPage = function () {
+                if (this.groupList && this.groupList.length > 0) {
+                    var startIndex = this.pageSize * (this.currentPage - 1);
+                    var endIndex = startIndex + this.pageSize;
+                    return this.groupList.slice(startIndex, endIndex);
+                }
+            };
+            GroupController.prototype.selectAllGroupsOnPage = function () {
+                var groupOnPage = this.getGroupListOnPage();
+                if (groupOnPage && groupOnPage.length > 0) {
+                    for (var index = 0; index < groupOnPage.length; index++) {
+                        var group = groupOnPage[index];
+                        group.isChecked = this.isCheckedAll;
+                    }
+                }
+            };
+            GroupController.prototype.removeOneGroup = function (group) {
+                var _this = this;
+                var confirmDialog = this.$window.confirm('Do you want to delete the group?');
+                if (confirmDialog) {
+                    this.pouchDBService.deleteEntity(group).then(function (data) {
+                        _this.$location.path('/group');
+                    }, function (reason) { });
+                }
+            };
+            GroupController.prototype.updateGroup = function (group) {
+                var _this = this;
+                this.pouchDBService.updateEntity(group).then(function (data) {
+                    _this.$location.path('/group');
+                }, function (reason) { });
+            };
+            return GroupController;
         }());
-        Helper.ModelHelper = ModelHelper;
-    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var BaseModel = (function () {
-            function BaseModel() {
-            }
-            return BaseModel;
-        }());
-        Model.BaseModel = BaseModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
-    var Enum;
-    (function (Enum) {
-        var EntityType;
-        (function (EntityType) {
-            EntityType[EntityType["User"] = 0] = "User";
-            EntityType[EntityType["Group"] = 1] = "Group";
-        })(EntityType = Enum.EntityType || (Enum.EntityType = {}));
-        var UserRole;
-        (function (UserRole) {
-            UserRole[UserRole["Admin"] = 0] = "Admin";
-            UserRole[UserRole["Editor"] = 1] = "Editor";
-            UserRole[UserRole["View"] = 2] = "View";
-        })(UserRole = Enum.UserRole || (Enum.UserRole = {}));
-    })(Enum = Rockstars.Enum || (Rockstars.Enum = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var GroupModel = (function (_super) {
-            __extends(GroupModel, _super);
-            function GroupModel() {
-                var _this = _super.call(this) || this;
-                _this.type = Rockstars.Enum.EntityType.Group;
-                return _this;
-            }
-            return GroupModel;
-        }(Model.BaseModel));
-        Model.GroupModel = GroupModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
-})(Rockstars || (Rockstars = {}));
-/// <reference path="../model/BaseModel.ts" />
-/// <reference path="../model/Enum.ts" />
-var Rockstars;
-(function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var UserModel = (function (_super) {
-            __extends(UserModel, _super);
-            function UserModel() {
-                var _this = _super.call(this) || this;
-                _this.type = Rockstars.Enum.EntityType.User;
-                return _this;
-            }
-            return UserModel;
-        }(Model.BaseModel));
-        Model.UserModel = UserModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+        Controller.GroupController = GroupController;
+    })(Controller = Rockstars.Controller || (Rockstars.Controller = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/angularjs/angular-cookies.d.ts" />
@@ -331,12 +480,6 @@ var Rockstars;
                     else if (this.$location.path() === '/user/edit/' + user_id) {
                         this.pouchDBService.getEntityById(Rockstars.Enum.EntityType.User, user_id).then(function (entity) {
                             _this.currentUser = entity;
-                            //temp
-                            _this.availableGroups = [
-                                { id: 1, name: 'Group A' },
-                                { id: 2, name: 'Group B' },
-                                { id: 3, name: 'Group C' }
-                            ];
                         }, function (reason) { });
                     }
                 }
@@ -346,14 +489,9 @@ var Rockstars;
                     }
                     else if (this.$location.path() === '/user/add') {
                         this.currentUser = new model.UserModel();
-                        //temp
-                        this.availableGroups = [
-                            { id: 1, name: 'Group A' },
-                            { id: 2, name: 'Group B' },
-                            { id: 3, name: 'Group C' }
-                        ];
                     }
                 }
+                this.initGroupList();
             };
             UserController.prototype.initUserList = function () {
                 var _this = this;
@@ -370,6 +508,15 @@ var Rockstars;
                 this.currentPage = 1;
                 this.numOfPages = this.userList.length % this.pageSize === 0 ?
                     this.userList.length / this.pageSize : Math.floor(this.userList.length / this.pageSize) + 1;
+            };
+            UserController.prototype.initGroupList = function () {
+                var _this = this;
+                this.pouchDBService.getAll(Rockstars.Enum.EntityType.Group).then(function (data) {
+                    _this.availableGroups = data;
+                    _this.modelHelper = new helper.ModelHelper(null, data);
+                }, function (reason) {
+                    _this.availableGroups = [];
+                });
             };
             UserController.prototype.directToUserForm = function () {
                 this.$location.path('/user/add');

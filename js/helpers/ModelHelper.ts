@@ -1,26 +1,15 @@
-/// <reference path="../services/PouchDBService.ts" />
+/// <reference path="../model/Enum.ts" />
 
 module Rockstars.Helper {
-    import model = Rockstars.Model;
-    import service = Rockstars.Service;
 
     export class ModelHelper {
-        public pouchDBService: service.PouchDBService;
-        public userList: Array<model.UserModel>;
+        public userList: Array<Model.UserModel>;
+        public groupList: Array<Model.GroupModel>;
 
-        // constructor(userList: Array<model.UserModel>) {
-        //     this.userList = userList;
-        // }
-
-        // getUserById(_id: string) {
-        //     for (let i = 0; i < this.userList.length; i++) {
-        //         var user = this.userList[i];
-        //         if (user._id === _id) {
-        //             return this.userList[i];
-        //         }
-        //     }
-        //     return null;
-        // }
+        constructor(userList?: Array<Model.UserModel>, groupList?: Array<Model.GroupModel>){
+            this.userList = userList;
+            this.groupList = groupList;
+        }
 
         getUserRole(role: number){
             return role === Enum.UserRole.Admin ? 'Admin' : 
@@ -37,5 +26,16 @@ module Rockstars.Helper {
             return dateObject.toDateString();
         }
 
+        getGroupName(_id: string) {
+            if (this.groupList && this.groupList.length > 0) {
+                for (let index = 0; index < this.groupList.length; index++) {
+                    let group = this.groupList[index];
+                    if (group._id === _id) {
+                        return group.name;
+                    }
+                }
+            }
+            return '';
+        }
     }
 }

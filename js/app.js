@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', ['ngRoute', 'ngCookies'])
+var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', '720kb.datepicker'])
 
 //ng-route config
 .config(function ($routeProvider, $locationProvider){
@@ -26,6 +26,14 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies'])
 		.when('/group', {
 			templateUrl: '/html/group.html',
 			controller: 'GroupController'
+		})
+		.when('/group/add', {
+			templateUrl: '/html/group_form.html',
+			controller: 'GroupController'
+		})
+		.when('/group/edit/:group_id', {
+		  templateUrl: '/html/group_form.html',
+		  controller: 'GroupController'
 		})
 		// .when('/add', {
 		//   templateUrl: '/html/contact_form.html',

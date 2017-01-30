@@ -12,6 +12,21 @@ $gray80: #CCCCCC;
 
 div.bootstrap{
     @import "bootstrap/stylesheets/bootstrap";
+
+    .table > thead > tr > th{
+      vertical-align: middle;
+
+      input[type="checkbox"]{
+          margin: 0;
+      }  
+    }
+    .table > tbody > tr > td{
+        vertical-align: middle;
+        
+        input[type="checkbox"]{
+          margin: 0;
+        }  
+    }
 }
 
 //GLOBAL
@@ -139,6 +154,10 @@ body{
                     border: none;
                     color: white;
                     border-radius: 2px;
+
+                    &:hover{
+                        background-color: $rockstars-hover-color1;
+                    }
                 }
             }
 
@@ -162,13 +181,13 @@ body{
             color: $rockstars-color1;
 
             &:hover{
-                color: white;
+                color: $rockstars-hover-color1;
             }
         }
     }
 
     //USER LIST
-    #userList {
+    #userList, #groupList {
         .table-responsive{
             padding-right: 15px;
             padding-left: 15px;
@@ -286,6 +305,57 @@ body{
     .pointer{
         cursor: pointer;
     }
+
+    //CUSTOM DATEPICKER
+    .date-picker{
+        a{
+            color: $rockstars-color1;
+
+            &:hover, &:focus{
+                color: $rockstars-color3;
+                text-decoration: none;
+            }
+        }
+
+        ._720kb-datepicker-calendar{
+            margin-top: 2px;
+            margin-left: 0px;
+            width: 40%;
+        }
+
+        ._720kb-datepicker-calendar-header:nth-child(odd) {
+            background: $rockstars-color2;
+        }
+
+        ._720kb-datepicker-calendar-header:nth-child(even){
+            background-color: $rockstars-hover-color2;
+        }
+
+        ._720kb-datepicker-calendar-month{
+            color: $rockstars-color1;
+            font-weight: bold;
+
+            span{
+                color: $rockstars-color1;
+            }
+        }
+
+        ._720kb-datepicker-calendar-header a:hover{
+            background-color: $rockstars-color2;
+        }
+
+        ._720kb-datepicker-calendar-day:hover,
+        ._720kb-datepicker-calendar-day._720kb-datepicker-active{
+            background-color: $rockstars-color2;
+            color: $rockstars-color3;
+        }
+        ._720kb-datepicker-calendar-years-pagination a._720kb-datepicker-active{
+            color: $rockstars-color3;
+            background-color: $rockstars-color2;
+        }
+
+    }
+
 }
 
 

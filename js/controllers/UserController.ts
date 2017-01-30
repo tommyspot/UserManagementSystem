@@ -15,7 +15,7 @@ module Rockstars.Controller {
     public userList: Array<model.UserModel>;
     public userListTmp: Array<model.UserModel>;
     public currentUser: model.UserModel;
-    public availableGroups: any;
+    public availableGroups: Array<Model.GroupModel>;
 
     public numOfPages: number;
     public currentPage: number;
@@ -56,33 +56,22 @@ module Rockstars.Controller {
           this.pouchDBService.getEntityById(Enum.EntityType.User, user_id).then((entity: model.UserModel) => {
             this.currentUser = entity;
           }, (reason) => { });
-        
-      } else if(this.$location.path() === '/user/edit/' + user_id){//Edit User
+          
+        } else if (this.$location.path() === '/user/edit/' + user_id) {//Edit User
           this.pouchDBService.getEntityById(Enum.EntityType.User, user_id).then((entity: model.UserModel) => {
             this.currentUser = entity;
-            //temp
-            this.availableGroups = [
-              { id: 1, name: 'Group A' },
-              { id: 2, name: 'Group B' },
-              { id: 3, name: 'Group C' }
-            ];
           }, (reason) => { });
         }
-      
-    } else {
+
+      } else {
         if (this.$location.path() === '/user') { //User
           this.initUserList();
-
         } else if (this.$location.path() === '/user/add') { //Add User
           this.currentUser = new model.UserModel();
-          //temp
-          this.availableGroups = [
-            { id: 1, name: 'Group A' },
-            { id: 2, name: 'Group B' },
-            { id: 3, name: 'Group C' }
-          ];
         }
       }
+      
+      this.initGroupList();
     }
 
     initUserList() {
@@ -93,8 +82,7 @@ module Rockstars.Controller {
         });
         this.userListTmp = this.userList;
         this.initPagination();
-      }, (reason) => { }
-      );
+      }, (reason) => { });
     }
 
     initPagination() {
@@ -102,6 +90,16 @@ module Rockstars.Controller {
       this.numOfPages = this.userList.length % this.pageSize === 0 ?
         this.userList.length / this.pageSize : Math.floor(this.userList.length / this.pageSize) + 1;
     }
+
+    initGroupList() {
+      this.pouchDBService.getAll(Enum.EntityType.Group).then((data: Array<model.GroupModel>) => {
+        this.availableGroups = data;
+        this.modelHelper = new helper.ModelHelper(null, data);
+      }, (reason) => {
+        this.availableGroups = [];
+      });
+    }
+
 
     directToUserForm() {
       this.$location.path('/user/add');
@@ -172,17 +170,19 @@ module Rockstars.Controller {
     removeUserInDetail(user: model.UserModel) {
       var confirmDialog = this.$window.confirm('Do you want to delete the user?');
       if (confirmDialog) {
-          this.pouchDBService.deleteEntity(user).then((data) => {
-            this.$location.path('/user');
-          }, (reason) => { });
+        this.pouchDBService.deleteEntity(user).then((data) => {
+          this.$location.path('/user');
+        }, (reason) => { });
       }
     }
 
-    updateUser(user: model.UserModel){
+    updateUser(user: model.UserModel) {
       this.pouchDBService.updateEntity(user).then((data) => {
         this.$location.path('/user');
       }, (reason) => { });
     }
+
+
 
   }
 

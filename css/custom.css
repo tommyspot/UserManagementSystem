@@ -4949,6 +4949,14 @@ div.bootstrap {
   @media print {
     div.bootstrap .hidden-print {
       display: none !important; } }
+  div.bootstrap .table > thead > tr > th {
+    vertical-align: middle; }
+    div.bootstrap .table > thead > tr > th input[type="checkbox"] {
+      margin: 0; }
+  div.bootstrap .table > tbody > tr > td {
+    vertical-align: middle; }
+    div.bootstrap .table > tbody > tr > td input[type="checkbox"] {
+      margin: 0; }
 
 body {
   margin: 0px; }
@@ -5038,6 +5046,8 @@ body {
         border: none;
         color: white;
         border-radius: 2px; }
+        #myApp .login-section .login-form .input-row .login-btn:hover {
+          background-color: #00E400; }
     #myApp .login-section .login-form .input-row:after {
       content: "";
       display: table;
@@ -5052,19 +5062,19 @@ body {
   #myApp .navbar-log-out .log-out-icon {
     color: #00A800; }
     #myApp .navbar-log-out .log-out-icon:hover {
-      color: white; }
+      color: #00E400; }
 
-#myApp #userList .table-responsive {
+#myApp #userList .table-responsive, #myApp #groupList .table-responsive {
   padding-right: 15px;
   padding-left: 15px; }
 
-#myApp #userList .action-row {
+#myApp #userList .action-row, #myApp #groupList .action-row {
   margin-bottom: 20px; }
 
-#myApp #userList .search-section {
+#myApp #userList .search-section, #myApp #groupList .search-section {
   text-align: right; }
 
-#myApp #userList .search-box {
+#myApp #userList .search-box, #myApp #groupList .search-box {
   border-radius: 6px;
   border: 1px solid #CCCCCC;
   height: 32px;
@@ -5073,15 +5083,16 @@ body {
   padding-right: 10px;
   outline: none; }
 
-#myApp #userList .align-center {
+#myApp #userList .align-center, #myApp #groupList .align-center {
   text-align: center; }
 
 #myApp #userList .table-bordered > thead > tr > th,
-#myApp #userList .table-bordered > thead > tr > td {
+#myApp #userList .table-bordered > thead > tr > td, #myApp #groupList .table-bordered > thead > tr > th,
+#myApp #groupList .table-bordered > thead > tr > td {
   border-bottom-width: 1px;
   color: #00A800; }
 
-#myApp #userList .show-user {
+#myApp #userList .show-user, #myApp #groupList .show-user {
   display: inline;
   width: auto; }
 
@@ -5147,3 +5158,38 @@ body {
 
 #myApp .pointer {
   cursor: pointer; }
+
+#myApp .date-picker a {
+  color: #00A800; }
+  #myApp .date-picker a:hover, #myApp .date-picker a:focus {
+    color: #FFFFFF;
+    text-decoration: none; }
+
+#myApp .date-picker ._720kb-datepicker-calendar {
+  margin-top: 2px;
+  margin-left: 0px;
+  width: 40%; }
+
+#myApp .date-picker ._720kb-datepicker-calendar-header:nth-child(odd) {
+  background: #1E1E1F; }
+
+#myApp .date-picker ._720kb-datepicker-calendar-header:nth-child(even) {
+  background-color: #3E3E40; }
+
+#myApp .date-picker ._720kb-datepicker-calendar-month {
+  color: #00A800;
+  font-weight: bold; }
+  #myApp .date-picker ._720kb-datepicker-calendar-month span {
+    color: #00A800; }
+
+#myApp .date-picker ._720kb-datepicker-calendar-header a:hover {
+  background-color: #1E1E1F; }
+
+#myApp .date-picker ._720kb-datepicker-calendar-day:hover,
+#myApp .date-picker ._720kb-datepicker-calendar-day._720kb-datepicker-active {
+  background-color: #1E1E1F;
+  color: #FFFFFF; }
+
+#myApp .date-picker ._720kb-datepicker-calendar-years-pagination a._720kb-datepicker-active {
+  color: #FFFFFF;
+  background-color: #1E1E1F; }
