@@ -1,7 +1,7 @@
 <div id="groupList" class="bootstrap">
     <div class="container">
         <div class="row action-row">
-            <div class="col-md-9 action-section">
+            <div class="col-md-9 col-sm-9 action-section">
                 <span><label for="numOfUsers">Show</label>
                     <select id="numOfUsers" class="form-control show-user" data-ng-model="viewModel.pageSize" data-ng-change="viewModel.initPagination()" convert-to-number>
                         <option value="5">5</option>
@@ -19,32 +19,38 @@
                     <span>Remove Group</span>
                 </button>
             </div>
-            <div class="col-md-3 search-section">
-                <input class="search-box" type="text" data-ng-change="viewModel.filterGroupList(searchText)" data-ng-model="searchText" placeholder="Search" />
+            <div class="col-md-3 col-sm-3 search-section">
+                <input class="form-control search-box" type="text" data-ng-change="viewModel.filterGroupList(searchText)" data-ng-model="searchText" placeholder="Search" />
             </div>
         </div>
-
 
         <div class="row">
             <div class="table-responsive">
                 <table class="table table-hover table-bordered">
                     <thead>
                         <tr>
-                            <th class="align-center"><input type="checkbox" data-ng-model="viewModel.isCheckedAll"
-                            data-ng-change="viewModel.selectAllGroupsOnPage()" /></th>
+                            <th class="column-60 align-center">
+                                <label class="cover-checkbox" for="checkAllGroups">
+                                    <input id="checkAllGroups" type="checkbox" data-ng-model="viewModel.isCheckedAll" data-ng-change="viewModel.selectAllGroupsOnPage()"/>
+                                </label>
+                            </th>
                             <th class="align-center">Name</th>
-                            <th class="align-center">Action</th>
+                            <th class="align-center" style="width: 250px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="pointer" data-ng-repeat="group in viewModel.getGroupListOnPage()">
-                            <td class="align-center" data-ng-click="$event.stopPropagation();"><input type="checkbox" data-ng-model="group.isChecked" /></td>
+                        <tr data-ng-repeat="group in viewModel.getGroupListOnPage()">
+                            <td class="align-center" data-ng-click="$event.stopPropagation();">
+                                <label class="cover-checkbox" for="group-{{$index}}">
+                                    <input id="group-{{$index}}" type="checkbox" data-ng-model="group.isChecked" />
+                                </label>
+                            </td>
                             <td class="align-center">{{group.name}}</td>
                             <td class="align-center">
-                                <button class="btn btn-default negative-btn" ng-click="viewModel.$location.path('/group/edit/' + group._id)">
+                                <button class="btn btn-default" ng-click="viewModel.$location.path('/group/edit/' + group._id)">
                                     <span class="glyphicon glyphicon-edit"></span><span>&nbsp;Edit</span>
                                 </button>
-                                <button class="btn btn-default negative-btn" ng-click="viewModel.removeOneGroup(group)">
+                                <button class="btn btn-default" ng-click="viewModel.removeOneGroup(group)">
                                     <span class="glyphicon glyphicon-remove"></span><span>&nbsp;Remove</span>
                                 </button>
                             </td>
@@ -52,31 +58,35 @@
                     </tbody>
                 </table>
             </div>
-
-            <nav aria-label="navigation" data-ng-if="viewModel.numOfPages > 0">
-                <ul class="pagination">
-                    <li class="pointer" ng-class="{'disabled': viewModel.currentPage === 1}"
-                        data-ng-click="viewModel.goToPreviousPage()">
-                        <a aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-
-                    <li class="pointer" data-ng-repeat="pageIndex in viewModel.getNumberPage() track by $index"
-                        data-ng-click="viewModel.goToPage($index + 1)"
-                        ng-class="{'active': $index + 1 === viewModel.currentPage}">{{pageIndex}}
-                        <span>{{$index + 1}}</span>
-                    </li>
-
-                    <li class="pointer" ng-class="{'disabled': viewModel.currentPage >= viewModel.numOfPages}" 
-                        data-ng-click="viewModel.goToNextPage()">
-                        <a aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="navigation" data-ng-if="viewModel.numOfPages > 0">
+                    <ul class="pagination">
+                        <li class="pointer" ng-class="{'disabled': viewModel.currentPage === 1}"
+                            data-ng-click="viewModel.goToPreviousPage()">
+                            <a aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <li class="pointer" data-ng-repeat="pageIndex in viewModel.getNumberPage() track by $index"
+                            data-ng-click="viewModel.goToPage($index + 1)"
+                            ng-class="{'active': $index + 1 === viewModel.currentPage}">{{pageIndex}}
+                            <span>{{$index + 1}}</span>
+                        </li>
+
+                        <li class="pointer" ng-class="{'disabled': viewModel.currentPage >= viewModel.numOfPages}" 
+                            data-ng-click="viewModel.goToNextPage()">
+                            <a aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
     </div>
 </div>

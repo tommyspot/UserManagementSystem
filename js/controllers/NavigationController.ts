@@ -2,8 +2,6 @@
 /// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 
 module Rockstars.Controller {
-  import model = Rockstars.Model;
-
 
   export class NavigationController {
     public nav: any;
@@ -18,14 +16,12 @@ module Rockstars.Controller {
     initNavigation() {
         this.nav = {
           navItems: ['user', 'group', 'configuration'],
-          selectedIndex: this.$location.path() == '/group' ? 1 : 0,
+          selectedIndex: this.$location.path() == '/user' ? 0 : (this.$location.path() == '/group' ? 1 : 2),
           navClick: ($index: number) => {
             this.nav.selectedIndex = $index;
           }
         };
     }
   }
-
-
 
 }

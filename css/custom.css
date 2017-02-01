@@ -5076,12 +5076,10 @@ body {
 
 #myApp #userList .search-box, #myApp #groupList .search-box {
   border-radius: 6px;
-  border: 1px solid #CCCCCC;
   height: 32px;
   line-height: 32px;
   padding-left: 10px;
-  padding-right: 10px;
-  outline: none; }
+  padding-right: 10px; }
 
 #myApp #userList .align-center, #myApp #groupList .align-center {
   text-align: center; }
@@ -5193,3 +5191,24 @@ body {
 #myApp .date-picker ._720kb-datepicker-calendar-years-pagination a._720kb-datepicker-active {
   color: #FFFFFF;
   background-color: #1E1E1F; }
+
+#myApp .table {
+  margin-bottom: 0px; }
+  #myApp .table .column-60 {
+    width: 60px; }
+
+#myApp .table > tbody > tr > td,
+#myApp .table > thead > tr > th {
+  position: relative; }
+
+#myApp .cover-checkbox {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin-bottom: 0px; }
+  #myApp .cover-checkbox input[type="checkbox"] {
+    height: 100%;
+    width: 16px; }
