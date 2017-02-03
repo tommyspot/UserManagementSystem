@@ -15,7 +15,13 @@ declare module ng {
     // CookieService
     // see http://docs.angularjs.org/api/ngCookies.$cookies
     ///////////////////////////////////////////////////////////////////////////
-    interface ICookiesService {}
+    interface ICookiesService {
+        get(key: string): any;
+        getObject(key: string): any;
+        put(key: string, value: string): void;
+        putObject(key: string, value: Object): void;
+        remove(key: string): void;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // CookieStoreService

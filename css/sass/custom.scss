@@ -6,6 +6,8 @@ $rockstars-color3: #FFFFFF;
 $rockstars-hover-color1: #00E400;
 $rockstars-hover-color2: #3E3E40;
 
+$rockstars-require-color: #F04B51;
+$rockstars-require-background-color: #F2DEDE;
 
 $login-input-height: 28px;
 $gray80: #CCCCCC;
@@ -30,14 +32,14 @@ div.bootstrap{
 }
 
 //GLOBAL
-// @font-face {
-//   font-family: upheavtt;
-//   src: url('/fonts/upheavtt.woff2') format('woff2');
-// }
+@font-face {
+  font-family: upheavtt;
+  src: url('/fonts/upheavtt.woff2') format('woff2');
+}
 
-// * {
-//   font-family: upheavtt, sans-serif;
-// }
+#navigation {
+  font-family: upheavtt, sans-serif;
+}
 
 body{
     margin: 0px;
@@ -47,18 +49,27 @@ body{
     //NAVIGATION
     #navigation{
         .logo-img{
-            height: 40px;
+            height: 50px;
         }
 
         .navbar-brand.logo{
             padding-top: 5px;
             padding-right: 40px;
+            padding-left: 0px;
         }
 
+        .navbar-nav{
+            margin-top: 14px;
+        }
+        
         .navbar-nav > li > a{
             color: $rockstars-color1;
             text-transform: uppercase;
-            font-weight: bold;
+            line-height: 10px;
+            border-radius: 10px;
+
+            padding-top: 11px;
+            padding-bottom: 11px;
         }
 
         .navbar-nav > .active > a,
@@ -73,8 +84,14 @@ body{
             color: white;
         }
 
+        .navbar-brand{
+            height: 60px;
+        }
+
     }
     #navigation.navbar-default{
+        background-image: url('../img/cover.jpg');
+        background-position: 100% 32%;
         background-color: $rockstars-color2;
         border-bottom-color: $rockstars-color1;
         border-top: 0px;
@@ -139,7 +156,7 @@ body{
                         height: $login-input-height;
                         border-radius: 2px;
                         border: 1px solid #CCC;                 
-                        padding: 10px;
+                        padding: 0 10px;
                     }
                 }
 
@@ -158,6 +175,11 @@ body{
                     &:hover{
                         background-color: $rockstars-hover-color1;
                     }
+
+                    &:disabled {
+                        background-color: #5AC65A;
+                        cursor: default;
+                    }
                 }
             }
 
@@ -172,10 +194,9 @@ body{
 
     .navbar-log-out{
         float: right;
-        padding: 15px 15px;
-        font-size: 18px;
-        line-height: 20px;
-        height: 50px;
+        padding: 18px 0 18px 18px;
+        font-size: 20px;
+        height: 60px;
 
         .log-out-icon{
             color: $rockstars-color1;
@@ -243,6 +264,10 @@ body{
             border: none;
             padding-left: 0px;
             padding-right: 0px;
+        }
+
+        input.ng-invalid.ng-touched {
+            background-color: $rockstars-require-background-color;
         }
     }
 
@@ -381,6 +406,15 @@ body{
             height: 100%;
             width: 16px;
         }
+    }
+
+    .error-message, .required-symbol{
+        color: $rockstars-require-color;
+    }
+    .required-field{
+        color: $rockstars-require-color;
+        font-style: italic;
+        font-size: 14px;
     }
 }
 

@@ -5,10 +5,14 @@ module Rockstars.Controller {
 
   export class NavigationController {
     public nav: any;
+    public authentication: Service.AuthenticationService;
 
-    constructor(private $scope: ng.IScope,
-        private $location: ng.ILocationService) {
+    constructor(private $scope: ng.IScope, 
+      private $q: ng.IQService,
+      private $location: ng.ILocationService,
+      private $cookies: ng.ICookiesService) {
           
+      this.authentication = new Service.AuthenticationService($q, $location, $cookies);
       $scope.viewModel = this;
       this.initNavigation();
     }
@@ -21,6 +25,10 @@ module Rockstars.Controller {
             this.nav.selectedIndex = $index;
           }
         };
+    }
+
+    logOut(){
+      this.authentication.logOut();
     }
   }
 

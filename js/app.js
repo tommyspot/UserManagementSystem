@@ -5,56 +5,50 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', '720kb.datepicker']
 	$routeProvider
 		.when('/login', {
 			templateUrl: '/html/login.html',
-			controller: 'LoginController'
+			controller: 'LoginController',
+			access: 'public'
 		})
 		.when('/user', {
 			templateUrl: '/html/user.html',
-			controller: 'UserController'
+			controller: 'UserController',
+			access: 'auth'
 		})
 		.when('/user/add', {
 			templateUrl: '/html/user_form.html',
-			controller: 'UserController'
+			controller: 'UserController',
+			access: 'auth'
 		})
 		.when('/user/:user_id', {
 		  templateUrl: '/html/user_detail.html',
-		  controller: 'UserController'
+		  controller: 'UserController',
+		  access: 'auth'
 		})
 		.when('/user/edit/:user_id', {
 		  templateUrl: '/html/user_form.html',
-		  controller: 'UserController'
+		  controller: 'UserController',
+		  access: 'auth'
 		})
 		.when('/group', {
 			templateUrl: '/html/group.html',
-			controller: 'GroupController'
+			controller: 'GroupController',
+			access: 'auth'
 		})
 		.when('/group/add', {
 			templateUrl: '/html/group_form.html',
-			controller: 'GroupController'
+			controller: 'GroupController',
+			access: 'auth'
 		})
 		.when('/group/edit/:group_id', {
 		  templateUrl: '/html/group_form.html',
-		  controller: 'GroupController'
+		  controller: 'GroupController',
+		  access: 'auth'
 		})
-		// .when('/add', {
-		//   templateUrl: '/html/contact_form.html',
-		//   controller: 'AddContactController'
-		// })
-		// .when('/edit/:contact_id', {
-		//   templateUrl: '/html/contact_form.html',
-		//   controller: 'EditContactController'
-		// })
 		// .when('/database', {
 		//   templateUrl: '/html/database.html',
 		//   controller: 'DatabaseController'
 		// })
 		.otherwise({redirectTo: '/login'});
-})
-
-;
-
-// .controller('LoginController', function ($scope, $routeParams){
-	
-// });
+});
 
 myApp.directive('convertToNumber', function () {
 	return {
@@ -73,18 +67,20 @@ myApp.directive('convertToNumber', function () {
 });
 
 
-// myApp.config(function ($controllerProvider) {
-//   myApp.controller = function (name, constructor) {
-//     $controllerProvider.register(name, constructor);
-//     return (this);
-//   };
-// });
+myApp.run(function ($rootScope, $routeParams, $location, authenticationService) {
+	$rootScope.$on("$routeChangeStart", function (event, next, current) {
+		if(next.access === 'auth' && !authenticationService.isAuthenticated()){
+			$location.path('/login');
+		}
+		$rootScope.locationPath = $location.path();
+  	});
+});
 
 myApp.controller('NavigationController', Rockstars.Controller.NavigationController);
 myApp.controller('LoginController', Rockstars.Controller.LoginController);
 myApp.controller('UserController', Rockstars.Controller.UserController);
 myApp.controller('GroupController', Rockstars.Controller.GroupController);
-
 myApp.service('PouchDBSerive', Rockstars.Service.PouchDBService);
+myApp.service('authenticationService', Rockstars.Service.AuthenticationService);
 
 

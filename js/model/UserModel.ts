@@ -18,4 +18,10 @@ module Rockstars.Model {
             this.type =  Enum.EntityType.User;
         }
     }
+
+    export class UserLoginModel{
+        public identifier: string;
+        public password: string;
+    }
+
 }

@@ -5,18 +5,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Rockstars;
 (function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var BaseModel = (function () {
-            function BaseModel() {
-            }
-            return BaseModel;
-        }());
-        Model.BaseModel = BaseModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
     var Enum;
     (function (Enum) {
         var EntityType;
@@ -31,6 +19,56 @@ var Rockstars;
             UserRole[UserRole["View"] = 2] = "View";
         })(UserRole = Enum.UserRole || (Enum.UserRole = {}));
     })(Enum = Rockstars.Enum || (Rockstars.Enum = {}));
+})(Rockstars || (Rockstars = {}));
+/// <reference path="../model/Enum.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Helper;
+    (function (Helper) {
+        var ModelHelper = (function () {
+            function ModelHelper(userList, groupList) {
+                this.userList = userList;
+                this.groupList = groupList;
+            }
+            ModelHelper.prototype.getUserRole = function (role) {
+                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
+                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
+            };
+            ModelHelper.prototype.formatCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
+            };
+            ModelHelper.prototype.formatShortCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString();
+            };
+            ModelHelper.prototype.getGroupName = function (_id) {
+                if (this.groupList && this.groupList.length > 0) {
+                    for (var index = 0; index < this.groupList.length; index++) {
+                        var group = this.groupList[index];
+                        if (group._id === _id) {
+                            return group.name;
+                        }
+                    }
+                }
+                return '';
+            };
+            return ModelHelper;
+        }());
+        Helper.ModelHelper = ModelHelper;
+    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var BaseModel = (function () {
+            function BaseModel() {
+            }
+            return BaseModel;
+        }());
+        Model.BaseModel = BaseModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../model/BaseModel.ts" />
 /// <reference path="../model/Enum.ts" />
@@ -48,6 +86,12 @@ var Rockstars;
             return UserModel;
         }(Model.BaseModel));
         Model.UserModel = UserModel;
+        var UserLoginModel = (function () {
+            function UserLoginModel() {
+            }
+            return UserLoginModel;
+        }());
+        Model.UserLoginModel = UserLoginModel;
     })(Model = Rockstars.Model || (Rockstars.Model = {}));
 })(Rockstars || (Rockstars = {}));
 var Rockstars;
@@ -69,6 +113,9 @@ var Rockstars;
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/pouchdb/index.d.ts" />
 /// <reference path="../lib/pouchdb/pouch.d.ts" />
+/// <reference path="../model/BaseModel.ts" />
+/// <reference path="../model/UserModel.ts" />
+/// <reference path="../model/GroupModel.ts" />
 var Rockstars;
 (function (Rockstars) {
     var Service;
@@ -189,44 +236,6 @@ var Rockstars;
         }());
         Service.PouchDBService = PouchDBService;
     })(Service = Rockstars.Service || (Rockstars.Service = {}));
-})(Rockstars || (Rockstars = {}));
-/// <reference path="../model/Enum.ts" />
-var Rockstars;
-(function (Rockstars) {
-    var Helper;
-    (function (Helper) {
-        var ModelHelper = (function () {
-            function ModelHelper(userList, groupList) {
-                this.userList = userList;
-                this.groupList = groupList;
-            }
-            ModelHelper.prototype.getUserRole = function (role) {
-                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
-                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
-            };
-            ModelHelper.prototype.formatCreatedDate = function (date) {
-                var dateObject = new Date(date);
-                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
-            };
-            ModelHelper.prototype.formatShortCreatedDate = function (date) {
-                var dateObject = new Date(date);
-                return dateObject.toDateString();
-            };
-            ModelHelper.prototype.getGroupName = function (_id) {
-                if (this.groupList && this.groupList.length > 0) {
-                    for (var index = 0; index < this.groupList.length; index++) {
-                        var group = this.groupList[index];
-                        if (group._id === _id) {
-                            return group.name;
-                        }
-                    }
-                }
-                return '';
-            };
-            return ModelHelper;
-        }());
-        Helper.ModelHelper = ModelHelper;
-    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../model/UserModel.ts" />
@@ -375,29 +384,93 @@ var Rockstars;
         Controller.GroupController = GroupController;
     })(Controller = Rockstars.Controller || (Rockstars.Controller = {}));
 })(Rockstars || (Rockstars = {}));
+/// <reference path="../model/BaseModel.ts" />
+/// <reference path="../model/UserModel.ts" />
+/// <reference path="../model/GroupModel.ts" />
+/// <reference path="../services/PouchDBService.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Service;
+    (function (Service) {
+        var AuthenticationService = (function () {
+            function AuthenticationService($q, $location, $cookies) {
+                this.$q = $q;
+                this.$location = $location;
+                this.$cookies = $cookies;
+                this.pouchDB = new Rockstars.Service.PouchDBService($q);
+                this.$cookies = $cookies;
+            }
+            AuthenticationService.prototype.doCallback = function (callback, data, status) {
+                if (callback) {
+                    callback(data, status);
+                }
+            };
+            AuthenticationService.prototype.login = function (userLogin, successCallback, errorCallback) {
+                var _this = this;
+                this.pouchDB.getAll(Rockstars.Enum.EntityType.User).then(function (results) {
+                    if (userLogin.identifier === 'admin' && userLogin.password === 'admin') {
+                        _this.$cookies.putObject('user', userLogin);
+                        return _this.doCallback(successCallback, userLogin);
+                    }
+                    else {
+                        for (var index = 0; index < results.length; index++) {
+                            var user = results[index];
+                            if (user.password === userLogin.password && (user.userName === userLogin.identifier || user.email === userLogin.identifier)) {
+                                _this.$cookies.putObject('user', user);
+                                return _this.doCallback(successCallback, user);
+                            }
+                        }
+                        return _this.doCallback(errorCallback, 'Invalid user name or password');
+                    }
+                }, function (reason) {
+                    return _this.doCallback(errorCallback, reason);
+                });
+            };
+            AuthenticationService.prototype.logOut = function () {
+                var user = this.$cookies.getObject('user');
+                if (user) {
+                    this.$cookies.remove('user');
+                }
+                this.$location.path('/login');
+            };
+            AuthenticationService.prototype.isAuthenticated = function () {
+                if (this.$cookies.getObject('user')) {
+                    return true;
+                }
+                return false;
+            };
+            return AuthenticationService;
+        }());
+        Service.AuthenticationService = AuthenticationService;
+    })(Service = Rockstars.Service || (Rockstars.Service = {}));
+})(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/angularjs/angular-cookies.d.ts" />
+/// <reference path="../services/AuthenticationService.ts" />
 var Rockstars;
 (function (Rockstars) {
     var Controller;
     (function (Controller) {
-        //import service = Clarity.Service;
-        // export interface IRootLoginControllerScope extends Clarity.Controller.IRootScope {
-        //   user: userModel;
-        //   returnUrl: string;
-        // }
+        var service = Rockstars.Service;
         var LoginController = (function () {
-            function LoginController($scope, $location, $window, $rootScope, $http, $cookieStore) {
+            function LoginController($scope, $location, $window, $rootScope, $http, $q, $cookies) {
                 this.$scope = $scope;
                 this.$location = $location;
                 this.$window = $window;
                 this.$rootScope = $rootScope;
                 this.$http = $http;
-                this.$cookieStore = $cookieStore;
+                this.$q = $q;
+                this.$cookies = $cookies;
+                this.authentication = new service.AuthenticationService($q, $location, $cookies);
                 $scope.viewModel = this;
             }
             LoginController.prototype.submit = function () {
-                this.$location.path('/user');
+                var _this = this;
+                this.authentication.login(this.userLogin, function () {
+                    _this.$location.path('/user');
+                }, function (error) {
+                    _this.errorMessage = error;
+                });
             };
             return LoginController;
         }());
@@ -411,9 +484,12 @@ var Rockstars;
     var Controller;
     (function (Controller) {
         var NavigationController = (function () {
-            function NavigationController($scope, $location) {
+            function NavigationController($scope, $q, $location, $cookies) {
                 this.$scope = $scope;
+                this.$q = $q;
                 this.$location = $location;
+                this.$cookies = $cookies;
+                this.authentication = new Rockstars.Service.AuthenticationService($q, $location, $cookies);
                 $scope.viewModel = this;
                 this.initNavigation();
             }
@@ -426,6 +502,9 @@ var Rockstars;
                         _this.nav.selectedIndex = $index;
                     }
                 };
+            };
+            NavigationController.prototype.logOut = function () {
+                this.authentication.logOut();
             };
             return NavigationController;
         }());

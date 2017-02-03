@@ -4958,20 +4958,34 @@ div.bootstrap {
     div.bootstrap .table > tbody > tr > td input[type="checkbox"] {
       margin: 0; }
 
+@font-face {
+  font-family: upheavtt;
+  src: url("/fonts/upheavtt.woff2") format("woff2"); }
+
+#navigation {
+  font-family: upheavtt, sans-serif; }
+
 body {
   margin: 0px; }
 
 #myApp #navigation .logo-img {
-  height: 40px; }
+  height: 50px; }
 
 #myApp #navigation .navbar-brand.logo {
   padding-top: 5px;
-  padding-right: 40px; }
+  padding-right: 40px;
+  padding-left: 0px; }
+
+#myApp #navigation .navbar-nav {
+  margin-top: 14px; }
 
 #myApp #navigation .navbar-nav > li > a {
   color: #00A800;
   text-transform: uppercase;
-  font-weight: bold; }
+  line-height: 10px;
+  border-radius: 10px;
+  padding-top: 11px;
+  padding-bottom: 11px; }
 
 #myApp #navigation .navbar-nav > .active > a,
 #myApp #navigation .navbar-nav > .active > a:hover,
@@ -4983,7 +4997,12 @@ body {
 #myApp #navigation .navbar-nav > li > a:focus {
   color: white; }
 
+#myApp #navigation .navbar-brand {
+  height: 60px; }
+
 #myApp #navigation.navbar-default {
+  background-image: url("../img/cover.jpg");
+  background-position: 100% 32%;
   background-color: #1E1E1F;
   border-bottom-color: #00A800;
   border-top: 0px;
@@ -5036,7 +5055,7 @@ body {
           height: 28px;
           border-radius: 2px;
           border: 1px solid #CCC;
-          padding: 10px; }
+          padding: 0 10px; }
       #myApp .login-section .login-form .input-row .margin-left-label {
         margin-left: 20%; }
       #myApp .login-section .login-form .input-row .login-btn {
@@ -5048,6 +5067,9 @@ body {
         border-radius: 2px; }
         #myApp .login-section .login-form .input-row .login-btn:hover {
           background-color: #00E400; }
+        #myApp .login-section .login-form .input-row .login-btn:disabled {
+          background-color: #5AC65A;
+          cursor: default; }
     #myApp .login-section .login-form .input-row:after {
       content: "";
       display: table;
@@ -5055,10 +5077,9 @@ body {
 
 #myApp .navbar-log-out {
   float: right;
-  padding: 15px 15px;
-  font-size: 18px;
-  line-height: 20px;
-  height: 50px; }
+  padding: 18px 0 18px 18px;
+  font-size: 20px;
+  height: 60px; }
   #myApp .navbar-log-out .log-out-icon {
     color: #00A800; }
     #myApp .navbar-log-out .log-out-icon:hover {
@@ -5112,6 +5133,9 @@ body {
   border: none;
   padding-left: 0px;
   padding-right: 0px; }
+
+#myApp #userForm input.ng-invalid.ng-touched {
+  background-color: #F2DEDE; }
 
 #myApp #userInfo .avatar {
   width: 80%;
@@ -5212,3 +5236,11 @@ body {
   #myApp .cover-checkbox input[type="checkbox"] {
     height: 100%;
     width: 16px; }
+
+#myApp .error-message, #myApp .required-symbol {
+  color: #F04B51; }
+
+#myApp .required-field {
+  color: #F04B51;
+  font-style: italic;
+  font-size: 14px; }

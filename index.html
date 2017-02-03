@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Admin Page</title>
+        <title>User Management System</title>
         <!--<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">-->
         <link rel="stylesheet" type="text/css" href="css/custom.css">
         <link rel="stylesheet" type="text/css" href="css/angular-datepicker.css">
@@ -9,9 +9,9 @@
 
     <body ng-app="myApp" id="myApp">
 		<!-- nav section -->
-        <div class="bootstrap" ng-controller="NavigationController">
-            <nav id="navigation" class="navbar navbar-default" data-ng-if="viewModel.$location.path() !== '/login'">
-                <div class="container-fluid">
+        <div class="bootstrap" data-ng-if="locationPath !== '/login'">
+            <nav id="navigation" class="navbar navbar-default" ng-controller="NavigationController">
+                <div class="container">
                     <div class="nav-header">
                         <a href="#" class="navbar-brand logo hidden-xs"><img class="logo-img" src="img/logo.png" /></a>
                         
@@ -20,7 +20,7 @@
                                 <a class="text-nav" ng-click="viewModel.nav.navClick($index)" ng-href="#/{{navLink}}">{{navLink}}</a>
                             </li>
                         </ul>
-                        <a href="#/login" class="navbar-log-out">
+                        <a class="navbar-log-out pointer" data-ng-click="viewModel.logOut()">
                             <span class="glyphicon glyphicon-log-out log-out-icon"></span>
                         </a>
                     </div>

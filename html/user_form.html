@@ -2,11 +2,23 @@
     <div class="container">
         <div class="list-group-item">
             <div class="form-group">
-                <form>
-                    <p><label for="firstName">First name: <span class="required-symbol">*</span></label> <input id="firstName" class="form-control" type="text" ng-model="viewModel.currentUser.firstName"></p>
+                <form id="addUserForm" name="addUserForm">
+                    <p><label for="firstName">First name:</label> <input id="firstName" class="form-control" type="text" ng-model="viewModel.currentUser.firstName"></p>
                     <p><label for="lastName">Last name: </label> <input id="lastName" class="form-control" type="text" ng-model="viewModel.currentUser.lastName"></p>
-                    <p><label for="email">Email:</label> <input id="email" class="form-control" type="text" ng-model="viewModel.currentUser.email"> </p>            
-                    <p><label for="userName">Username:</label> <input id="userName" class="form-control" type="text" ng-model="viewModel.currentUser.userName"> </p>
+                    <p><label for="email">Email:<span class="required-symbol">*</span></label>
+                        <span class="required-field" ng-if="addUserForm.email.$touched && addUserForm.email.$invalid">(The email is required or invalid)</span>
+                        <input id="email" name="email" class="form-control" type="email" ng-model="viewModel.currentUser.email" required>
+                    </p>
+
+                    <p><label for="userName">Username:<span class="required-symbol">*</span></label>
+                        <span class="required-field" ng-if="addUserForm.userName.$touched && addUserForm.userName.$invalid">(The username is required)</span>
+                        <input id="userName" name="userName" class="form-control" type="text" ng-model="viewModel.currentUser.userName" required>
+                    </p>
+
+                    <p><label for="password">Password:<span class="required-symbol">*</span></label>
+                        <span class="required-field" ng-if="addUserForm.password.$touched && addUserForm.password.$invalid">(The password is required)</span>
+                        <input id="password" name="password" class="form-control" type="password" ng-model="viewModel.currentUser.password" required>
+                    </p>
                     <p><label for="dateOfBirth">Date of birth:</label>
                         <datepicker class="date-picker" date-format="MMMM dd yyyy">
                             <input id="dateOfBirth" class="form-control" type="text" ng-model="viewModel.currentUser.dateOfBirth">
@@ -31,22 +43,20 @@
                     <p><label for="role">Notes:</label> 
                         <textarea class="form-control" data-ng-model="viewModel.currentUser.notes" rows="3"></textarea>
                     </p>
-
                 </form>				
             </div>
-        
 
             <button class="btn btn-default positive-btn" data-ng-if="viewModel.$location.path() === '/user/add'" 
-                ng-click="viewModel.addUser(viewModel.currentUser)">
+                data-ng-click="viewModel.addUser(viewModel.currentUser)" data-ng-disabled="addUserForm.$invalid">
                 <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Save</span>
             </button>
 
             <button class="btn btn-default positive-btn" data-ng-if="viewModel.$location.path() === '/user/edit/' + viewModel.currentUser._id" 
-                ng-click="viewModel.updateUser(viewModel.currentUser)">
+                data-ng-click="viewModel.updateUser(viewModel.currentUser)" data-ng-disabled="addUserForm.$invalid">
                 <span class="glyphicon glyphicon-ok"></span><span>&nbsp;Update</span>
             </button>
 
-            <button class="btn btn-default negative-btn" ng-click="viewModel.$location.path('/user')">
+            <button class="btn btn-default negative-btn" data-ng-click="viewModel.$location.path('/user')">
                 <span class="glyphicon glyphicon-remove"></span><span>&nbsp;Cancel</span>
             </button>
 

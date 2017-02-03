@@ -1,6 +1,9 @@
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/pouchdb/index.d.ts" />
 /// <reference path="../lib/pouchdb/pouch.d.ts" />
+/// <reference path="../model/BaseModel.ts" />
+/// <reference path="../model/UserModel.ts" />
+/// <reference path="../model/GroupModel.ts" />
 
 module Rockstars.Service {
 
