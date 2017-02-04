@@ -2,21 +2,23 @@
     <div class="login-section">
         <div class="header"><span>Login</span></div>
         <form name="loginForm" class="login-form" data-ng-submit="viewModel.submit()">
-            
+
             <div class="input-row" data-ng-if="viewModel.errorMessage != undefined && viewModel.errorMessage != ''">
                 <div class="input margin-left-label"><span class="error-message">{{viewModel.errorMessage}}</span></div>
             </div>
 
             <div class="input-row">
                 <div class="label"><label for="identifier">Email</label></div>
-                <div class="input"><input class="input-text" type="text" id="identifier" data-ng-model="viewModel.userLogin.identifier" placeholder="Email or Username" required /></div>
+                <div class="input"><input class="input-text" type="text" id="identifier" data-ng-model="viewModel.userLogin.identifier" placeholder="Email or Username"
+                        required /></div>
             </div>
             <div class="input-row">
                 <div class="label"><label for="password">Password</label></div>
-                <div class="input"><input class="input-text" type="password" id="password" data-ng-model="viewModel.userLogin.password" placeholder="Password" required/></div>
+                <div class="input"><input class="input-text" type="password" id="password" data-ng-model="viewModel.userLogin.password" placeholder="Password"
+                        required/></div>
             </div>
             <div class="input-row">
-                <div class="input margin-left-label"><input type="checkbox" id="remember" /> Remember me</div>
+                <div class="input margin-left-label"><input type="checkbox" id="remember" data-ng-model="viewModel.userLogin.isRememberMe" /> Remember me</div>
             </div>
             <div class="input-row">
                 <div class="input margin-left-label"><input type="submit" class="login-btn pointer" value="Sign in" data-ng-disabled="loginForm.$invalid" /></div>

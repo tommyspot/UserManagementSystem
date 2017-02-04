@@ -14,7 +14,6 @@ module Rockstars.Controller {
     constructor(private $scope: ng.IScope,
       private $location: ng.ILocationService,
       private $window: ng.IWindowService,
-      private $rootScope: ng.IRootScopeService,
       private $http: ng.IHttpService,
       private $q: ng.IQService,
       private $cookies: ng.ICookiesService) {

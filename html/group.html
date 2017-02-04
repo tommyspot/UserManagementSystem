@@ -10,11 +10,13 @@
                         <option value="99999">All</option>
                     </select>
                 </span>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.directToGroupForm()">
+                <button type="button" class="btn btn-default" data-ng-click="viewModel.directToGroupForm()"
+                    data-ng-if="viewModel.authenticationService.hasEditorPermission()">
                     <span class="glyphicon glyphicon-plus"></span>
                     <span>Add Group</span>
                 </button>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.removeGroup()">
+                <button type="button" class="btn btn-default" data-ng-click="viewModel.removeGroup()"
+                    data-ng-if="viewModel.authenticationService.hasEditorPermission()">
                     <span class="glyphicon glyphicon-trash"></span>
                     <span>Remove Group</span>
                 </button>
@@ -35,7 +37,8 @@
                                 </label>
                             </th>
                             <th class="align-center">Name</th>
-                            <th class="align-center" style="width: 250px;">Action</th>
+                            <th class="align-center" style="width: 250px;"
+                                data-ng-if="viewModel.authenticationService.hasEditorPermission()">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,7 +49,7 @@
                                 </label>
                             </td>
                             <td class="align-center">{{group.name}}</td>
-                            <td class="align-center">
+                            <td class="align-center" data-ng-if="viewModel.authenticationService.hasEditorPermission()">
                                 <button class="btn btn-default" ng-click="viewModel.$location.path('/group/edit/' + group._id)">
                                     <span class="glyphicon glyphicon-edit"></span><span>&nbsp;Edit</span>
                                 </button>

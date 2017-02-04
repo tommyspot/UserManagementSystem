@@ -5,6 +5,18 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Rockstars;
 (function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var BaseModel = (function () {
+            function BaseModel() {
+            }
+            return BaseModel;
+        }());
+        Model.BaseModel = BaseModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
     var Enum;
     (function (Enum) {
         var EntityType;
@@ -19,56 +31,6 @@ var Rockstars;
             UserRole[UserRole["View"] = 2] = "View";
         })(UserRole = Enum.UserRole || (Enum.UserRole = {}));
     })(Enum = Rockstars.Enum || (Rockstars.Enum = {}));
-})(Rockstars || (Rockstars = {}));
-/// <reference path="../model/Enum.ts" />
-var Rockstars;
-(function (Rockstars) {
-    var Helper;
-    (function (Helper) {
-        var ModelHelper = (function () {
-            function ModelHelper(userList, groupList) {
-                this.userList = userList;
-                this.groupList = groupList;
-            }
-            ModelHelper.prototype.getUserRole = function (role) {
-                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
-                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
-            };
-            ModelHelper.prototype.formatCreatedDate = function (date) {
-                var dateObject = new Date(date);
-                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
-            };
-            ModelHelper.prototype.formatShortCreatedDate = function (date) {
-                var dateObject = new Date(date);
-                return dateObject.toDateString();
-            };
-            ModelHelper.prototype.getGroupName = function (_id) {
-                if (this.groupList && this.groupList.length > 0) {
-                    for (var index = 0; index < this.groupList.length; index++) {
-                        var group = this.groupList[index];
-                        if (group._id === _id) {
-                            return group.name;
-                        }
-                    }
-                }
-                return '';
-            };
-            return ModelHelper;
-        }());
-        Helper.ModelHelper = ModelHelper;
-    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var BaseModel = (function () {
-            function BaseModel() {
-            }
-            return BaseModel;
-        }());
-        Model.BaseModel = BaseModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../model/BaseModel.ts" />
 /// <reference path="../model/Enum.ts" />
@@ -237,7 +199,46 @@ var Rockstars;
         Service.PouchDBService = PouchDBService;
     })(Service = Rockstars.Service || (Rockstars.Service = {}));
 })(Rockstars || (Rockstars = {}));
+/// <reference path="../model/Enum.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Helper;
+    (function (Helper) {
+        var ModelHelper = (function () {
+            function ModelHelper(userList, groupList) {
+                this.userList = userList;
+                this.groupList = groupList;
+            }
+            ModelHelper.prototype.getUserRole = function (role) {
+                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
+                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
+            };
+            ModelHelper.prototype.formatCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
+            };
+            ModelHelper.prototype.formatShortCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString();
+            };
+            ModelHelper.prototype.getGroupName = function (_id) {
+                if (this.groupList && this.groupList.length > 0) {
+                    for (var index = 0; index < this.groupList.length; index++) {
+                        var group = this.groupList[index];
+                        if (group._id === _id) {
+                            return group.name;
+                        }
+                    }
+                }
+                return '';
+            };
+            return ModelHelper;
+        }());
+        Helper.ModelHelper = ModelHelper;
+    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
+})(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../model/UserModel.ts" />
 /// <reference path="../model/GroupModel.ts" />
 /// <reference path="../services/PouchDBService.ts" />
@@ -250,7 +251,7 @@ var Rockstars;
         var service = Rockstars.Service;
         var helper = Rockstars.Helper;
         var GroupController = (function () {
-            function GroupController($scope, $location, $window, $rootScope, $http, $q, $filter, $routeParams) {
+            function GroupController($scope, $location, $window, $rootScope, $http, $q, $filter, $routeParams, $cookies) {
                 this.$scope = $scope;
                 this.$location = $location;
                 this.$window = $window;
@@ -259,8 +260,10 @@ var Rockstars;
                 this.$q = $q;
                 this.$filter = $filter;
                 this.$routeParams = $routeParams;
+                this.$cookies = $cookies;
                 $scope.viewModel = this;
                 this.pouchDBService = new service.PouchDBService($q);
+                this.authenticationService = new service.AuthenticationService($q, $location, $cookies);
                 this.modelHelper = new helper.ModelHelper();
                 this.pageSize = 5;
                 this.initPage();
@@ -409,14 +412,22 @@ var Rockstars;
                 var _this = this;
                 this.pouchDB.getAll(Rockstars.Enum.EntityType.User).then(function (results) {
                     if (userLogin.identifier === 'admin' && userLogin.password === 'admin') {
-                        _this.$cookies.putObject('user', userLogin);
+                        //this.$cookies.putObject('user', userLogin);
                         return _this.doCallback(successCallback, userLogin);
                     }
                     else {
                         for (var index = 0; index < results.length; index++) {
                             var user = results[index];
                             if (user.password === userLogin.password && (user.userName === userLogin.identifier || user.email === userLogin.identifier)) {
-                                _this.$cookies.putObject('user', user);
+                                if (userLogin.isRememberMe) {
+                                    _this.$cookies.putObject('user', user);
+                                }
+                                else {
+                                    var ms = new Date().getTime();
+                                    var expireDate = new Date(ms + 86400000); //1 day
+                                    var option = { 'expires': expireDate };
+                                    _this.$cookies.putObject('user', user, option);
+                                }
                                 return _this.doCallback(successCallback, user);
                             }
                         }
@@ -439,6 +450,23 @@ var Rockstars;
                 }
                 return false;
             };
+            AuthenticationService.prototype.hasEditorPermission = function () {
+                var userLogin = this.$cookies.getObject('user');
+                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Admin) {
+                    return true;
+                }
+                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Editor) {
+                    return true;
+                }
+                return false;
+            };
+            AuthenticationService.prototype.hasAdminPermission = function () {
+                var userLogin = this.$cookies.getObject('user');
+                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Admin) {
+                    return true;
+                }
+                return false;
+            };
             return AuthenticationService;
         }());
         Service.AuthenticationService = AuthenticationService;
@@ -453,11 +481,10 @@ var Rockstars;
     (function (Controller) {
         var service = Rockstars.Service;
         var LoginController = (function () {
-            function LoginController($scope, $location, $window, $rootScope, $http, $q, $cookies) {
+            function LoginController($scope, $location, $window, $http, $q, $cookies) {
                 this.$scope = $scope;
                 this.$location = $location;
                 this.$window = $window;
-                this.$rootScope = $rootScope;
                 this.$http = $http;
                 this.$q = $q;
                 this.$cookies = $cookies;
@@ -495,16 +522,24 @@ var Rockstars;
             }
             NavigationController.prototype.initNavigation = function () {
                 var _this = this;
-                this.nav = {
-                    navItems: ['user', 'group', 'configuration'],
-                    selectedIndex: this.$location.path() == '/user' ? 0 : (this.$location.path() == '/group' ? 1 : 2),
-                    navClick: function ($index) {
-                        _this.nav.selectedIndex = $index;
-                    }
-                };
-            };
-            NavigationController.prototype.logOut = function () {
-                this.authentication.logOut();
+                if (this.authentication.hasAdminPermission()) {
+                    this.nav = {
+                        navItems: ['user', 'group', 'configuration'],
+                        selectedIndex: this.$location.path() === '/user' ? 0 : (this.$location.path() === '/group' ? 1 : 2),
+                        navClick: function ($index) {
+                            _this.nav.selectedIndex = $index;
+                        }
+                    };
+                }
+                else {
+                    this.nav = {
+                        navItems: ['user', 'group'],
+                        selectedIndex: this.$location.path() === '/user' ? 0 : 1,
+                        navClick: function ($index) {
+                            _this.nav.selectedIndex = $index;
+                        }
+                    };
+                }
             };
             return NavigationController;
         }());
@@ -512,6 +547,7 @@ var Rockstars;
     })(Controller = Rockstars.Controller || (Rockstars.Controller = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../model/UserModel.ts" />
 /// <reference path="../model/GroupModel.ts" />
 /// <reference path="../services/PouchDBService.ts" />
@@ -524,7 +560,7 @@ var Rockstars;
         var service = Rockstars.Service;
         var helper = Rockstars.Helper;
         var UserController = (function () {
-            function UserController($scope, $location, $window, $rootScope, $http, $q, $filter, $routeParams) {
+            function UserController($scope, $location, $window, $rootScope, $http, $q, $filter, $routeParams, $cookies) {
                 this.$scope = $scope;
                 this.$location = $location;
                 this.$window = $window;
@@ -533,9 +569,11 @@ var Rockstars;
                 this.$q = $q;
                 this.$filter = $filter;
                 this.$routeParams = $routeParams;
+                this.$cookies = $cookies;
                 $scope.viewModel = this;
                 this.pouchDBService = new service.PouchDBService($q);
                 this.modelHelper = new helper.ModelHelper();
+                this.authenticationService = new service.AuthenticationService($q, $location, $cookies);
                 this.pageSize = 5;
                 this.initPage();
                 var self = this;

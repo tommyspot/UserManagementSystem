@@ -1,4 +1,5 @@
 /// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../model/UserModel.ts" />
 /// <reference path="../model/GroupModel.ts" />
 /// <reference path="../services/PouchDBService.ts" />
@@ -11,6 +12,7 @@ module Rockstars.Controller {
 
   export class UserController {
     public pouchDBService: service.PouchDBService;
+    public authenticationService: service.AuthenticationService;
     public modelHelper: helper.ModelHelper;
     public userList: Array<model.UserModel>;
     public userListTmp: Array<model.UserModel>;
@@ -29,11 +31,13 @@ module Rockstars.Controller {
       private $http: ng.IHttpService,
       private $q: ng.IQService,
       private $filter: ng.IFilterService,
-      private $routeParams: any) {
+      private $routeParams: any,
+      private $cookies: ng.ICookiesService) {
 
       $scope.viewModel = this;
       this.pouchDBService = new service.PouchDBService($q);
       this.modelHelper = new helper.ModelHelper();
+      this.authenticationService = new service.AuthenticationService($q, $location, $cookies);
 
       this.pageSize = 5;
       this.initPage();

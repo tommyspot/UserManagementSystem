@@ -1,54 +1,58 @@
 var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', '720kb.datepicker'])
 
-//ng-route config
-.config(function ($routeProvider, $locationProvider){
-	$routeProvider
-		.when('/login', {
-			templateUrl: '/html/login.html',
-			controller: 'LoginController',
-			access: 'public'
-		})
-		.when('/user', {
-			templateUrl: '/html/user.html',
-			controller: 'UserController',
-			access: 'auth'
-		})
-		.when('/user/add', {
-			templateUrl: '/html/user_form.html',
-			controller: 'UserController',
-			access: 'auth'
-		})
-		.when('/user/:user_id', {
-		  templateUrl: '/html/user_detail.html',
-		  controller: 'UserController',
-		  access: 'auth'
-		})
-		.when('/user/edit/:user_id', {
-		  templateUrl: '/html/user_form.html',
-		  controller: 'UserController',
-		  access: 'auth'
-		})
-		.when('/group', {
-			templateUrl: '/html/group.html',
-			controller: 'GroupController',
-			access: 'auth'
-		})
-		.when('/group/add', {
-			templateUrl: '/html/group_form.html',
-			controller: 'GroupController',
-			access: 'auth'
-		})
-		.when('/group/edit/:group_id', {
-		  templateUrl: '/html/group_form.html',
-		  controller: 'GroupController',
-		  access: 'auth'
-		})
-		// .when('/database', {
-		//   templateUrl: '/html/database.html',
-		//   controller: 'DatabaseController'
-		// })
-		.otherwise({redirectTo: '/login'});
-});
+	//ng-route config
+	.config(function ($routeProvider, $locationProvider) {
+		$routeProvider
+			.when('/login', {
+				templateUrl: '/html/login.html',
+				controller: 'LoginController',
+				access: 'public'
+			})
+			.when('/user', {
+				templateUrl: '/html/user.html',
+				controller: 'UserController',
+				access: 'auth'
+			})
+			.when('/user/add', {
+				templateUrl: '/html/user_form.html',
+				controller: 'UserController',
+				access: 'auth'
+			})
+			.when('/user/:user_id', {
+				templateUrl: '/html/user_detail.html',
+				controller: 'UserController',
+				access: 'auth'
+			})
+			.when('/user/edit/:user_id', {
+				templateUrl: '/html/user_form.html',
+				controller: 'UserController',
+				access: 'auth'
+			})
+			.when('/group', {
+				templateUrl: '/html/group.html',
+				controller: 'GroupController',
+				access: 'auth'
+			})
+			.when('/group/add', {
+				templateUrl: '/html/group_form.html',
+				controller: 'GroupController',
+				access: 'auth'
+			})
+			.when('/group/edit/:group_id', {
+				templateUrl: '/html/group_form.html',
+				controller: 'GroupController',
+				access: 'auth'
+			})
+			.when('/access_denied', {
+				templateUrl: '/html/access_denied.html',
+				access: 'public'
+			})
+			// .when('/database', {
+			//   templateUrl: '/html/database.html',
+			//   controller: 'DatabaseController'
+			// })
+			.otherwise({ redirectTo: '/login' });
+	});
 
 myApp.directive('convertToNumber', function () {
 	return {
@@ -67,13 +71,29 @@ myApp.directive('convertToNumber', function () {
 });
 
 
-myApp.run(function ($rootScope, $routeParams, $location, authenticationService) {
+myApp.run(function ($rootScope, $routeParams, $location, authenticationService, $cookies) {
 	$rootScope.$on("$routeChangeStart", function (event, next, current) {
-		if(next.access === 'auth' && !authenticationService.isAuthenticated()){
-			$location.path('/login');
+
+		if($location.path() === '' && authenticationService.isAuthenticated()){
+			$location.path('/user');
 		}
+
+		if (next.access === 'auth') {
+			if (!authenticationService.isAuthenticated()) {
+				$location.path('/login');
+
+			} else {
+				if (!authenticationService.hasEditorPermission()) {
+					if (next.originalPath === '/user/add' || next.originalPath === '/user/edit/:user_id'
+						|| next.originalPath === '/group/add' || next.originalPath === '/group/edit/:group_id') {
+						$location.path('/access_denied');
+					}
+				}
+			}
+		}
+
 		$rootScope.locationPath = $location.path();
-  	});
+	});
 });
 
 myApp.controller('NavigationController', Rockstars.Controller.NavigationController);

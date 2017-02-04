@@ -10,11 +10,13 @@
                         <option value="99999">All</option>
                     </select>
                 </span>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.directToUserForm()">
+                <button type="button" class="btn btn-default" data-ng-click="viewModel.directToUserForm()"
+                    data-ng-if="viewModel.authenticationService.hasEditorPermission()">
                     <span class="glyphicon glyphicon-plus"></span>
                     <span>Add User</span>
                 </button>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.removeUser()">
+                <button type="button" class="btn btn-default" data-ng-click="viewModel.removeUser()" 
+                    data-ng-if="viewModel.authenticationService.hasEditorPermission()">
                     <span class="glyphicon glyphicon-trash"></span>
                     <span>Remove User</span>
                 </button>

@@ -22,6 +22,7 @@ module Rockstars.Model {
     export class UserLoginModel{
         public identifier: string;
         public password: string;
+        public isRememberMe: boolean;
     }
 
 }

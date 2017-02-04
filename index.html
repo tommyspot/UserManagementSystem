@@ -9,7 +9,7 @@
 
     <body ng-app="myApp" id="myApp">
 		<!-- nav section -->
-        <div class="bootstrap" data-ng-if="locationPath !== '/login'">
+        <div class="bootstrap" data-ng-if="locationPath !== undefined && locationPath !== '/login'">
             <nav id="navigation" class="navbar navbar-default" ng-controller="NavigationController">
                 <div class="container">
                     <div class="nav-header">
@@ -20,7 +20,7 @@
                                 <a class="text-nav" ng-click="viewModel.nav.navClick($index)" ng-href="#/{{navLink}}">{{navLink}}</a>
                             </li>
                         </ul>
-                        <a class="navbar-log-out pointer" data-ng-click="viewModel.logOut()">
+                        <a class="navbar-log-out pointer" data-ng-click="viewModel.authentication.logOut()">
                             <span class="glyphicon glyphicon-log-out log-out-icon"></span>
                         </a>
                     </div>

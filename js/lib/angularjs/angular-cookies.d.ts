@@ -18,8 +18,8 @@ declare module ng {
     interface ICookiesService {
         get(key: string): any;
         getObject(key: string): any;
-        put(key: string, value: string): void;
-        putObject(key: string, value: Object): void;
+        put(key: string, value: string, option?: Object): void;
+        putObject(key: string, value: Object, option?: Object): void;
         remove(key: string): void;
     }
 
