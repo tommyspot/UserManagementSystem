@@ -5129,12 +5129,12 @@ body {
   background-color: #00A800;
   color: white; }
 
-#myApp #userForm .list-group-item {
+#myApp #userForm .list-group-item, #myApp #congiguration .list-group-item {
   border: none;
   padding-left: 0px;
   padding-right: 0px; }
 
-#myApp #userForm input.ng-invalid.ng-touched {
+#myApp #userForm input.ng-invalid.ng-touched, #myApp #congiguration input.ng-invalid.ng-touched {
   background-color: #F2DEDE; }
 
 #myApp #userInfo .avatar {

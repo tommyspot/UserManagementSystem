@@ -1,0 +1,26 @@
+<div id="congiguration" class="bootstrap">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="list-group-item">
+					<div class="form-group">
+						<p><label for="databaseName">Database:</label>
+						<input id="databaseName" class="form-control" type="text" ng-model="viewModel.dbURL"> </p>
+					</div>
+
+					<div class="form-group">
+						<p><label for="databaseName">Expire login time (miliseconds):</label>
+						<input id="databaseName" class="form-control" type="number" ng-model="viewModel.expireTime" min="1000" step="1000"> </p>
+					</div>
+				
+					<a ng-click="viewModel.saveConfig()">
+						<button class="btn btn-default positive-btn">
+							<span class="glyphicon glyphicon-ok"></span>
+							<span>Save</span>
+						</button>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

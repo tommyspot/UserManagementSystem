@@ -19,6 +19,7 @@ module Rockstars.Controller {
       private $cookies: ng.ICookiesService) {
 
       this.authentication = new service.AuthenticationService($q, $location, $cookies);
+      this.authentication.initTempAdminUser();
       $scope.viewModel = this;
     }
 
@@ -29,6 +30,5 @@ module Rockstars.Controller {
         this.errorMessage = error;
       });
     }
-
   }
 }

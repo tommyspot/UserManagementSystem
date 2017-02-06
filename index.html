@@ -13,7 +13,8 @@
             <nav id="navigation" class="navbar navbar-default" ng-controller="NavigationController">
                 <div class="container">
                     <div class="nav-header">
-                        <a href="#" class="navbar-brand logo hidden-xs"><img class="logo-img" src="img/logo.png" /></a>
+                        <a href="#" class="navbar-brand logo hidden-xs" data-ng-click="viewModel.nav.selectedIndex = 0;">
+                            <img class="logo-img" src="img/logo.png" /></a>
                         
                         <ul class="nav navbar-nav">
                             <li ng-repeat="navLink in viewModel.nav.navItems" ng-class="{active : $index === viewModel.nav.selectedIndex}">
@@ -28,12 +29,9 @@
             </nav>
         </div>
 
-
         <div class="container">
 			<div ng-view></div>
 		</div>
-
-
 
         <script src='js/lib/angularjs/angular.min.js'></script>
         <script src='js/lib/angularjs/angular-route.min.js'></script>   

@@ -12,8 +12,7 @@ module Rockstars.Service {
 			private $location: ng.ILocationService,
 			private $cookies: ng.ICookiesService) {
 
-			this.pouchDB = new Rockstars.Service.PouchDBService($q);
-			this.$cookies = $cookies;
+			this.pouchDB = new Rockstars.Service.PouchDBService($q, $cookies);
 		}
 
 		doCallback(callback: Function, data?: any, status?: any) {
@@ -25,31 +24,28 @@ module Rockstars.Service {
 		login(userLogin: Model.UserLoginModel, successCallback: Function, errorCallback: Function) {
 			this.pouchDB.getAll(Enum.EntityType.User).then(
 				(results: Array<Model.UserModel>) => {
+					for (let index = 0; index < results.length; index++) {
+						let user = results[index];
+						if (user.password === userLogin.password 
+							&& (user.userName.toLowerCase() === userLogin.identifier.toLowerCase() || user.email.toLowerCase() === userLogin.identifier.toLowerCase())) {
+							
+							if (userLogin.isRememberMe) {
+								this.$cookies.putObject('user', user);
+							} else {
+								var today = new Date().getTime();
+								var oneDay = 86400000;	//miliseconds
+								var expireDate = new Date(today + oneDay);
 
-					if (userLogin.identifier === 'admin' && userLogin.password === 'admin') {
-						//this.$cookies.putObject('user', userLogin);
-						return this.doCallback(successCallback, userLogin);
-
-					} else {
-						for (let index = 0; index < results.length; index++) {
-							let user = results[index];
-							if (user.password === userLogin.password && (user.userName === userLogin.identifier || user.email === userLogin.identifier)) {
-								if(userLogin.isRememberMe){
-									this.$cookies.putObject('user', user);
-								} else {
-									var ms = new Date().getTime();
-									var expireDate = new Date(ms + 86400000);//1 day
-									
-									var option={'expires': expireDate};
-									this.$cookies.putObject('user', user, option);
-								}
-								
-								return this.doCallback(successCallback, user);
+								var option = { 'expires': expireDate };
+								this.$cookies.put('expireTime', oneDay.toString());
+								this.$cookies.putObject('user', user, option);
 							}
-						}
 
-						return this.doCallback(errorCallback, 'Invalid user name or password');
+							return this.doCallback(successCallback, user);
+						}
 					}
+
+					return this.doCallback(errorCallback, 'Invalid user name or password');
 				},
 				(reason) => {
 					return this.doCallback(errorCallback, reason);
@@ -60,6 +56,10 @@ module Rockstars.Service {
 			let user = this.$cookies.getObject('user');
 			if (user) {
 				this.$cookies.remove('user');
+			}
+			let expireTime = this.$cookies.get('expireTime');
+			if (expireTime) {
+				this.$cookies.remove('expireTime');
 			}
 			this.$location.path('/login');
 		}
@@ -92,5 +92,21 @@ module Rockstars.Service {
 			return false;
 		}
 
+		initTempAdminUser(){
+			var userName = 'admin';
+			this.pouchDB.getUserByName(userName).then(
+				(result: Model.UserModel) => {
+					if (result == null) {
+						var user = new Model.UserModel();
+						user.createdDate = new Date().toString();
+						user.email = 'admin@gmail.com';
+						user.userName = 'admin';
+						user.password = 'admin';
+						user.firstName = 'admin';
+						user.role = Enum.UserRole.Admin;
+						this.pouchDB.addEntity(user).then((result) => {},(reason) => {});
+					}
+				}, (reason) => {});
+		}
 	}
 }

@@ -34,7 +34,7 @@ module Rockstars.Controller {
       private $cookies: ng.ICookiesService) {
 
       $scope.viewModel = this;
-      this.pouchDBService = new service.PouchDBService($q);
+      this.pouchDBService = new service.PouchDBService($q, $cookies);
       this.authenticationService = new service.AuthenticationService($q, $location, $cookies);
       this.modelHelper = new helper.ModelHelper();
 

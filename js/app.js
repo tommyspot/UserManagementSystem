@@ -47,10 +47,10 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', '720kb.datepicker']
 				templateUrl: '/html/access_denied.html',
 				access: 'public'
 			})
-			// .when('/database', {
-			//   templateUrl: '/html/database.html',
-			//   controller: 'DatabaseController'
-			// })
+			.when('/configuration', {
+			  templateUrl: '/html/configuration.html',
+			  controller: 'ConfigurationController'
+			})
 			.otherwise({ redirectTo: '/login' });
 	});
 
@@ -100,6 +100,8 @@ myApp.controller('NavigationController', Rockstars.Controller.NavigationControll
 myApp.controller('LoginController', Rockstars.Controller.LoginController);
 myApp.controller('UserController', Rockstars.Controller.UserController);
 myApp.controller('GroupController', Rockstars.Controller.GroupController);
+myApp.controller('ConfigurationController', Rockstars.Controller.ConfigurationController);
+
 myApp.service('PouchDBSerive', Rockstars.Service.PouchDBService);
 myApp.service('authenticationService', Rockstars.Service.AuthenticationService);
 

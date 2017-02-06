@@ -83,18 +83,29 @@ var Rockstars;
     var Service;
     (function (Service) {
         var PouchDBService = (function () {
-            function PouchDBService($q) {
+            function PouchDBService($q, $cookies) {
                 this.$q = $q;
-                this.database = new PouchDB('UserDB');
+                this.$cookies = $cookies;
+                this.initDatabase();
             }
+            PouchDBService.prototype.initDatabase = function () {
+                var dbName = this.$cookies.get('dbURL');
+                if (dbName == null) {
+                    dbName = 'UserDB';
+                    this.$cookies.put('dbURL', dbName);
+                }
+                this.database = new PouchDB(dbName);
+            };
             PouchDBService.prototype.getAll = function (type) {
                 var defer = this.$q.defer();
                 this.database.allDocs({ include_docs: true, descending: true }, function (err, doc) {
                     var entityList = [];
-                    for (var docRow = 0; docRow < doc.rows.length; docRow++) {
-                        var entityDoc = doc.rows[docRow].doc;
-                        if (entityDoc.type === type) {
-                            entityList.push(entityDoc);
+                    if (doc) {
+                        for (var docRow = 0; docRow < doc.rows.length; docRow++) {
+                            var entityDoc = doc.rows[docRow].doc;
+                            if (entityDoc.type === type) {
+                                entityList.push(entityDoc);
+                            }
                         }
                     }
                     defer.resolve(entityList);
@@ -109,6 +120,32 @@ var Rockstars;
                         var entity = result[index];
                         if (entity._id === _id) {
                             defer.resolve(entity);
+                        }
+                    }
+                }, function (reason) {
+                    defer.reject(reason);
+                });
+                return defer.promise;
+            };
+            ;
+            PouchDBService.prototype.getUserByName = function (userName) {
+                var defer = this.$q.defer();
+                this.getAll(Rockstars.Enum.EntityType.User).then(function (result) {
+                    if (result && result.length == 0) {
+                        defer.resolve(undefined);
+                    }
+                    else {
+                        var isUserExisted = false;
+                        for (var index = 0; index < result.length; index++) {
+                            var user = result[index];
+                            if (user.userName === userName) {
+                                isUserExisted = true;
+                                defer.resolve(user);
+                                break;
+                            }
+                        }
+                        if (!isUserExisted) {
+                            defer.resolve(undefined);
                         }
                     }
                 }, function (reason) {
@@ -199,6 +236,154 @@ var Rockstars;
         Service.PouchDBService = PouchDBService;
     })(Service = Rockstars.Service || (Rockstars.Service = {}));
 })(Rockstars || (Rockstars = {}));
+/// <reference path="../model/BaseModel.ts" />
+/// <reference path="../model/UserModel.ts" />
+/// <reference path="../model/GroupModel.ts" />
+/// <reference path="../services/PouchDBService.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Service;
+    (function (Service) {
+        var AuthenticationService = (function () {
+            function AuthenticationService($q, $location, $cookies) {
+                this.$q = $q;
+                this.$location = $location;
+                this.$cookies = $cookies;
+                this.pouchDB = new Rockstars.Service.PouchDBService($q, $cookies);
+            }
+            AuthenticationService.prototype.doCallback = function (callback, data, status) {
+                if (callback) {
+                    callback(data, status);
+                }
+            };
+            AuthenticationService.prototype.login = function (userLogin, successCallback, errorCallback) {
+                var _this = this;
+                this.pouchDB.getAll(Rockstars.Enum.EntityType.User).then(function (results) {
+                    for (var index = 0; index < results.length; index++) {
+                        var user = results[index];
+                        if (user.password === userLogin.password
+                            && (user.userName.toLowerCase() === userLogin.identifier.toLowerCase() || user.email.toLowerCase() === userLogin.identifier.toLowerCase())) {
+                            if (userLogin.isRememberMe) {
+                                _this.$cookies.putObject('user', user);
+                            }
+                            else {
+                                var today = new Date().getTime();
+                                var oneDay = 86400000; //miliseconds
+                                var expireDate = new Date(today + oneDay);
+                                var option = { 'expires': expireDate };
+                                _this.$cookies.put('expireTime', oneDay.toString());
+                                _this.$cookies.putObject('user', user, option);
+                            }
+                            return _this.doCallback(successCallback, user);
+                        }
+                    }
+                    return _this.doCallback(errorCallback, 'Invalid user name or password');
+                }, function (reason) {
+                    return _this.doCallback(errorCallback, reason);
+                });
+            };
+            AuthenticationService.prototype.logOut = function () {
+                var user = this.$cookies.getObject('user');
+                if (user) {
+                    this.$cookies.remove('user');
+                }
+                var expireTime = this.$cookies.get('expireTime');
+                if (expireTime) {
+                    this.$cookies.remove('expireTime');
+                }
+                this.$location.path('/login');
+            };
+            AuthenticationService.prototype.isAuthenticated = function () {
+                if (this.$cookies.getObject('user')) {
+                    return true;
+                }
+                return false;
+            };
+            AuthenticationService.prototype.hasEditorPermission = function () {
+                var userLogin = this.$cookies.getObject('user');
+                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Admin) {
+                    return true;
+                }
+                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Editor) {
+                    return true;
+                }
+                return false;
+            };
+            AuthenticationService.prototype.hasAdminPermission = function () {
+                var userLogin = this.$cookies.getObject('user');
+                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Admin) {
+                    return true;
+                }
+                return false;
+            };
+            AuthenticationService.prototype.initTempAdminUser = function () {
+                var _this = this;
+                var userName = 'admin';
+                this.pouchDB.getUserByName(userName).then(function (result) {
+                    if (result == null) {
+                        var user = new Rockstars.Model.UserModel();
+                        user.createdDate = new Date().toString();
+                        user.email = 'admin@gmail.com';
+                        user.userName = 'admin';
+                        user.password = 'admin';
+                        user.firstName = 'admin';
+                        user.role = Rockstars.Enum.UserRole.Admin;
+                        _this.pouchDB.addEntity(user).then(function (result) { }, function (reason) { });
+                    }
+                }, function (reason) { });
+            };
+            return AuthenticationService;
+        }());
+        Service.AuthenticationService = AuthenticationService;
+    })(Service = Rockstars.Service || (Rockstars.Service = {}));
+})(Rockstars || (Rockstars = {}));
+/// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/angularjs/angular-cookies.d.ts" />
+/// <reference path="../services/AuthenticationService.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Controller;
+    (function (Controller) {
+        var service = Rockstars.Service;
+        var ConfigurationController = (function () {
+            function ConfigurationController($scope, $location, $window, $http, $q, $cookies) {
+                this.$scope = $scope;
+                this.$location = $location;
+                this.$window = $window;
+                this.$http = $http;
+                this.$q = $q;
+                this.$cookies = $cookies;
+                this.pouchDBService = new service.PouchDBService($q, $cookies);
+                $scope.viewModel = this;
+                this.initPage();
+            }
+            ConfigurationController.prototype.initPage = function () {
+                this.expireTime = parseInt(this.$cookies.get('expireTime'));
+                this.dbURL = this.$cookies.get('dbURL');
+            };
+            ConfigurationController.prototype.saveConfig = function () {
+                this.updateDbURL();
+                this.updateExpireTime();
+            };
+            ConfigurationController.prototype.updateDbURL = function () {
+                this.$cookies.remove('dbURL');
+                this.$cookies.put('dbURL', this.dbURL);
+            };
+            ConfigurationController.prototype.updateExpireTime = function () {
+                var userLogin = this.$cookies.getObject('user');
+                this.$cookies.remove('user');
+                this.$cookies.remove('expireTime');
+                this.$cookies.put('expireTime', this.expireTime.toString());
+                var toDay = new Date().getTime();
+                var expireDate = new Date(toDay + this.expireTime);
+                var option = { 'expires': expireDate };
+                this.$cookies.putObject('user', userLogin, option);
+            };
+            return ConfigurationController;
+        }());
+        Controller.ConfigurationController = ConfigurationController;
+    })(Controller = Rockstars.Controller || (Rockstars.Controller = {}));
+})(Rockstars || (Rockstars = {}));
 /// <reference path="../model/Enum.ts" />
 var Rockstars;
 (function (Rockstars) {
@@ -262,7 +447,7 @@ var Rockstars;
                 this.$routeParams = $routeParams;
                 this.$cookies = $cookies;
                 $scope.viewModel = this;
-                this.pouchDBService = new service.PouchDBService($q);
+                this.pouchDBService = new service.PouchDBService($q, $cookies);
                 this.authenticationService = new service.AuthenticationService($q, $location, $cookies);
                 this.modelHelper = new helper.ModelHelper();
                 this.pageSize = 5;
@@ -387,91 +572,6 @@ var Rockstars;
         Controller.GroupController = GroupController;
     })(Controller = Rockstars.Controller || (Rockstars.Controller = {}));
 })(Rockstars || (Rockstars = {}));
-/// <reference path="../model/BaseModel.ts" />
-/// <reference path="../model/UserModel.ts" />
-/// <reference path="../model/GroupModel.ts" />
-/// <reference path="../services/PouchDBService.ts" />
-var Rockstars;
-(function (Rockstars) {
-    var Service;
-    (function (Service) {
-        var AuthenticationService = (function () {
-            function AuthenticationService($q, $location, $cookies) {
-                this.$q = $q;
-                this.$location = $location;
-                this.$cookies = $cookies;
-                this.pouchDB = new Rockstars.Service.PouchDBService($q);
-                this.$cookies = $cookies;
-            }
-            AuthenticationService.prototype.doCallback = function (callback, data, status) {
-                if (callback) {
-                    callback(data, status);
-                }
-            };
-            AuthenticationService.prototype.login = function (userLogin, successCallback, errorCallback) {
-                var _this = this;
-                this.pouchDB.getAll(Rockstars.Enum.EntityType.User).then(function (results) {
-                    if (userLogin.identifier === 'admin' && userLogin.password === 'admin') {
-                        //this.$cookies.putObject('user', userLogin);
-                        return _this.doCallback(successCallback, userLogin);
-                    }
-                    else {
-                        for (var index = 0; index < results.length; index++) {
-                            var user = results[index];
-                            if (user.password === userLogin.password && (user.userName === userLogin.identifier || user.email === userLogin.identifier)) {
-                                if (userLogin.isRememberMe) {
-                                    _this.$cookies.putObject('user', user);
-                                }
-                                else {
-                                    var ms = new Date().getTime();
-                                    var expireDate = new Date(ms + 86400000); //1 day
-                                    var option = { 'expires': expireDate };
-                                    _this.$cookies.putObject('user', user, option);
-                                }
-                                return _this.doCallback(successCallback, user);
-                            }
-                        }
-                        return _this.doCallback(errorCallback, 'Invalid user name or password');
-                    }
-                }, function (reason) {
-                    return _this.doCallback(errorCallback, reason);
-                });
-            };
-            AuthenticationService.prototype.logOut = function () {
-                var user = this.$cookies.getObject('user');
-                if (user) {
-                    this.$cookies.remove('user');
-                }
-                this.$location.path('/login');
-            };
-            AuthenticationService.prototype.isAuthenticated = function () {
-                if (this.$cookies.getObject('user')) {
-                    return true;
-                }
-                return false;
-            };
-            AuthenticationService.prototype.hasEditorPermission = function () {
-                var userLogin = this.$cookies.getObject('user');
-                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Admin) {
-                    return true;
-                }
-                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Editor) {
-                    return true;
-                }
-                return false;
-            };
-            AuthenticationService.prototype.hasAdminPermission = function () {
-                var userLogin = this.$cookies.getObject('user');
-                if (userLogin && userLogin.role === Rockstars.Enum.UserRole.Admin) {
-                    return true;
-                }
-                return false;
-            };
-            return AuthenticationService;
-        }());
-        Service.AuthenticationService = AuthenticationService;
-    })(Service = Rockstars.Service || (Rockstars.Service = {}));
-})(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../services/AuthenticationService.ts" />
@@ -489,6 +589,7 @@ var Rockstars;
                 this.$q = $q;
                 this.$cookies = $cookies;
                 this.authentication = new service.AuthenticationService($q, $location, $cookies);
+                this.authentication.initTempAdminUser();
                 $scope.viewModel = this;
             }
             LoginController.prototype.submit = function () {
@@ -571,7 +672,7 @@ var Rockstars;
                 this.$routeParams = $routeParams;
                 this.$cookies = $cookies;
                 $scope.viewModel = this;
-                this.pouchDBService = new service.PouchDBService($q);
+                this.pouchDBService = new service.PouchDBService($q, $cookies);
                 this.modelHelper = new helper.ModelHelper();
                 this.authenticationService = new service.AuthenticationService($q, $location, $cookies);
                 this.pageSize = 5;

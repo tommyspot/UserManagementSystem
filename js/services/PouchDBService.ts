@@ -8,23 +8,33 @@
 module Rockstars.Service {
 
 	export class PouchDBService {
-
-		public $q: ng.IQService;
 		public database: any;
 
-		constructor($q: ng.IQService) {
-			this.$q = $q;
-			this.database = new PouchDB('UserDB');
+		constructor(private $q: ng.IQService,
+			private $cookies: ng.ICookiesService) {
+
+			this.initDatabase();
+		}
+
+		initDatabase(){
+			var dbName = this.$cookies.get('dbURL');
+			if(dbName == null){
+				dbName = 'UserDB';
+				this.$cookies.put('dbURL', dbName);
+			}
+			this.database = new PouchDB(dbName);
 		}
 
 		getAll(type: number) {
 			var defer = this.$q.defer();
 			this.database.allDocs({ include_docs: true, descending: true }, function (err: any, doc: any) {
 				var entityList = [];
-				for (var docRow = 0; docRow < doc.rows.length; docRow++) {
-					var entityDoc = doc.rows[docRow].doc;
-					if (entityDoc.type === type) {
-						entityList.push(entityDoc);
+				if(doc){
+					for (var docRow = 0; docRow < doc.rows.length; docRow++) {
+						var entityDoc = doc.rows[docRow].doc;
+						if (entityDoc.type === type) {
+							entityList.push(entityDoc);
+						}
 					}
 				}
 				defer.resolve(entityList);
@@ -42,6 +52,34 @@ module Rockstars.Service {
 						defer.resolve(entity);
 					}
 				}
+			}, (reason) => {
+				defer.reject(reason);
+			});
+			return defer.promise;
+		};
+
+		getUserByName(userName: string) {
+			var defer = this.$q.defer();
+
+			this.getAll(Enum.EntityType.User).then((result: Array<Model.UserModel>) => {
+				if(result && result.length == 0){
+					defer.resolve(undefined);
+				}
+				else {
+					let isUserExisted = false;
+					for (let index = 0; index < result.length; index++) {
+						let user = result[index];
+						if (user.userName === userName) {
+							isUserExisted = true;
+							defer.resolve(user);
+							break;
+						}
+					}
+					if(!isUserExisted){
+						defer.resolve(undefined);
+					}
+				}
+
 			}, (reason) => {
 				defer.reject(reason);
 			});
