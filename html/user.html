@@ -1,7 +1,7 @@
 <div id="userList" class="bootstrap">
     <div class="container">
         <div class="row action-row">
-            <div class="col-md-9 col-sm-9 action-section">
+            <div class="col col-md-9 col-sm-9 action-section">
                 <span><label for="numOfUsers">Show</label>
                     <select id="numOfUsers" class="form-control show-user" data-ng-model="viewModel.pageSize" data-ng-change="viewModel.initPagination()" convert-to-number>
                         <option value="5">5</option>
@@ -10,22 +10,26 @@
                         <option value="99999">All</option>
                     </select>
                 </span>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.directToUserForm()"
+                <button type="button" class="btn btn-default button-xs" data-ng-click="viewModel.directToUserForm()"
                     data-ng-if="viewModel.authenticationService.hasEditorPermission()">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    <span>Add User</span>
+                    <span class="glyphicon glyphicon-plus glyphicon-xs"></span>
+                    <span class="hidden-xs">Add User</span>
                 </button>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.removeUser()" 
+                <button type="button" class="btn btn-default button-xs" data-ng-click="viewModel.removeUser()" 
                     data-ng-if="viewModel.authenticationService.hasEditorPermission()">
-                    <span class="glyphicon glyphicon-trash"></span>
-                    <span>Remove User</span>
+                    <span class="glyphicon glyphicon-trash glyphicon-xs"></span>
+                    <span class="hidden-xs">Remove User</span>
                 </button>
+
+                <span class="glyphicon glyphicon-search glyphicon-xs hidden-sm hidden-md hidden-lg" data-ng-click="showSearchBox = !showSearchBox"></span>
+                <input class="form-control search-box hidden-sm hidden-md hidden-lg" type="text" data-ng-class="{'show-search-box': showSearchBox, 'hide-search-box': !showSearchBox}"
+                    data-ng-change="viewModel.filterUserList(searchText)" data-ng-model="searchText" placeholder="Search" />
+
             </div>
-            <div class="col-md-3 col-sm-3 search-section">
+            <div class="col col-md-3 col-sm-3 search-section hidden-xs">
                 <input class="form-control search-box" type="text" data-ng-change="viewModel.filterUserList(searchText)" data-ng-model="searchText" placeholder="Search" />
             </div>
         </div>
-
 
         <div class="row">
             <div class="table-responsive">
@@ -37,11 +41,11 @@
                                     <input id="checkAllUsers" type="checkbox" data-ng-model="viewModel.isCheckedAll" data-ng-change="viewModel.selectAllUsersOnPage()" />
                                 </label>
                             </th>
-                            <th class="align-center">Name</th>
+                            <th class="align-center hidden-xs">Name</th>
                             <th class="align-center">Username</th>
-                            <th class="align-center">Email</th>
-                            <th class="align-center">Role</th>
-                            <th class="align-center">Group</th>
+                            <th class="align-center hidden-xs">Email</th>
+                            <th class="align-center hidden-xs">Role</th>
+                            <th class="align-center hidden-xs">Group</th>
                             <th class="align-center">Created Date</th>
                         </tr>
                     </thead>
@@ -53,25 +57,16 @@
                                     <input id="user-{{$index}}" type="checkbox" data-ng-model="user.isChecked" />
                                 </label>
                             </td>
-                            <td class="align-center">{{user.firstName}} {{user.lastName}}</td>
+                            <td class="align-center hidden-xs">{{user.firstName}} {{user.lastName}}</td>
                             <td class="align-center">{{user.userName}}</td>
-                            <td class="align-center">{{user.email}}</td>
-                            <td class="align-center">{{viewModel.modelHelper.getUserRole(user.role)}}</td>
-                            <td class="align-center">{{viewModel.modelHelper.getGroupName(user.groupId)}}</td>
+                            <td class="align-center hidden-xs">{{user.email}}</td>
+                            <td class="align-center hidden-xs">{{viewModel.modelHelper.getUserRole(user.role)}}</td>
+                            <td class="align-center hidden-xs">{{viewModel.modelHelper.getGroupName(user.groupId)}}</td>
                             <td class="align-center">{{viewModel.modelHelper.formatCreatedDate(user.createdDate)}}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <!--<div class="col-md-12 text-center">
-                <ul class="pagination">
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                </ul>
-            </div>-->
         </div>
 
         <div class="row">

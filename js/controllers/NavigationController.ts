@@ -1,11 +1,13 @@
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/angularjs/angular-cookies.d.ts" />
+/// <reference path="../services/AuthenticationService.ts" />
 
 module Rockstars.Controller {
   import service = Rockstars.Service;
 
   export class NavigationController {
     public nav: any;
+    public showMenu: boolean;
     public authentication: service.AuthenticationService;
 
     constructor(private $scope: ng.IScope,
@@ -25,6 +27,7 @@ module Rockstars.Controller {
           selectedIndex: this.$location.path() === '/user' ? 0 : (this.$location.path() === '/group' ? 1 : 2),
           navClick: ($index: number) => {
             this.nav.selectedIndex = $index;
+            this.showMenu = false;
           }
         };
 
@@ -34,6 +37,7 @@ module Rockstars.Controller {
           selectedIndex: this.$location.path() === '/user' ? 0 : 1,
           navClick: ($index: number) => {
             this.nav.selectedIndex = $index;
+            this.showMenu = false;
           }
         };
       }

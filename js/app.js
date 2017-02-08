@@ -71,19 +71,19 @@ myApp.directive('convertToNumber', function () {
 });
 
 
-myApp.run(function ($rootScope, $routeParams, $location, authenticationService, $cookies) {
+myApp.run(function ($rootScope, $routeParams, $location, AuthenticationService) {
 	$rootScope.$on("$routeChangeStart", function (event, next, current) {
 
-		if($location.path() === '' && authenticationService.isAuthenticated()){
+		if($location.path() === '' && AuthenticationService.isAuthenticated()){
 			$location.path('/user');
 		}
 
 		if (next.access === 'auth') {
-			if (!authenticationService.isAuthenticated()) {
+			if (!AuthenticationService.isAuthenticated()) {
 				$location.path('/login');
 
 			} else {
-				if (!authenticationService.hasEditorPermission()) {
+				if (!AuthenticationService.hasEditorPermission()) {
 					if (next.originalPath === '/user/add' || next.originalPath === '/user/edit/:user_id'
 						|| next.originalPath === '/group/add' || next.originalPath === '/group/edit/:group_id') {
 						$location.path('/access_denied');
@@ -101,8 +101,7 @@ myApp.controller('LoginController', Rockstars.Controller.LoginController);
 myApp.controller('UserController', Rockstars.Controller.UserController);
 myApp.controller('GroupController', Rockstars.Controller.GroupController);
 myApp.controller('ConfigurationController', Rockstars.Controller.ConfigurationController);
-
-myApp.service('PouchDBSerive', Rockstars.Service.PouchDBService);
-myApp.service('authenticationService', Rockstars.Service.AuthenticationService);
+myApp.service('PouchDBService', Rockstars.Service.PouchDBService);
+myApp.service('AuthenticationService', Rockstars.Service.AuthenticationService);
 
 

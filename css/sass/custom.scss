@@ -61,6 +61,10 @@ body{
         .navbar-nav{
             margin-top: 14px;
         }
+
+        .menu-icon{
+            display: none;
+        }
         
         .navbar-nav > li > a{
             color: $rockstars-color1;
@@ -98,6 +102,54 @@ body{
         border-left: 0px;
         border-right: 0px;
         border-radius: 0px;
+    }
+
+    @media only screen and (max-width: 736px) {
+        #navigation{
+            .navbar-nav{
+                width: 250px;
+                position: absolute;
+                right: 0px;
+                top: 46px;
+                background: $rockstars-color2;
+                z-index: 9999;
+            }
+            .navbar-nav > li > a{
+                border-radius: 0px;
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+
+            .navbar-nav.hidden-menu{
+                display: none;
+            }
+
+            .navbar-nav.show-menu{
+                display: block;
+            }
+
+            .menu-icon{
+                float: right;
+                display: block;
+                font-size: 20px;
+                height: 60px;
+                line-height: 60px;
+                color: $rockstars-color1;
+                text-decoration: none;
+
+                &:hover{
+                    color: $rockstars-hover-color1;
+                }
+            }
+
+            .navbar-log-out{
+                display: none;
+            }
+
+            .log-out-xs{
+                display: block;
+            }
+        }
     }
 
     //LOGIN SECTION
@@ -207,7 +259,97 @@ body{
         }
     }
 
-    //USER LIST
+    .log-out-xs{
+        display: none;
+    }
+
+    .logo-sx{
+        display: none;
+    }
+
+    //@media only screen and (max-width: 980px) {//iphone 6 plus
+    @media only screen and (max-width: 736px) {
+        .login-container { 
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            top: 0px;
+            left: 0px;
+            display: table;
+            font-size: 18px;
+        }
+        .login-section{
+            width: 100%;
+            height: auto;
+            box-sizing: border-box;
+            border-radius: 0px;
+            border: none;
+            padding: 50px;
+            display: table-cell;
+            vertical-align: middle;
+
+            .hidden-sx{
+                display: none;
+            }
+            .logo-sx{
+                display: block;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .login-form{
+                .input-row{
+
+                    .label{
+                        width: 100%;
+                        text-align: left;
+                        height: 32px;
+                        line-height: 32px;
+                    }
+
+                    .input{
+                        width: 100%;
+                        text-align: left;
+                        padding-left: 0px;
+                        
+                        .input-text{
+                            width: 100%;
+                            height: 32px;
+                            line-height: 32px;
+                            font-size: 14px;
+                        }
+                    }
+
+                    .margin-left-label{
+                        margin-left: 0;
+                    }
+
+                    .login-btn{
+                        width: 100%;
+                        height: 32px;
+                        font-size: 14px;
+                        text-transform: uppercase;
+                        
+                        -webkit-appearance: none; /*Safari/Chrome*/
+                        -moz-appearance: none; /*Firefox*/
+                        -ms-appearance: none; /*IE*/
+                        -o-appearance: none; /*Opera*/
+                        appearance: none;
+                    }
+                    .input-sx{
+                        height: 32px;
+                        line-height: 32px;
+                    }
+                }
+                .margin-top-0-sx{
+                    margin-top: 0px;
+                }
+            }
+        }
+    }
+
+    // USER/GROUP LIST
     #userList, #groupList {
         .table-responsive{
             padding-right: 15px;
@@ -240,7 +382,55 @@ body{
             display: inline;
             width: auto;
         }
+        .action-column{
+            width: 200px;
+        }
+        .glyphicon-plus{
+            top: 0px;
+        }
     }
+
+    @media only screen and (max-width: 736px) {
+        #userList, #groupList {
+
+            .button-xs{
+                height: 34px;
+                width: 50px;
+            }
+
+            .glyphicon-xs{
+                font-size: 18px;
+            }
+
+            .glyphicon-search{
+                height: 34px;
+                line-height: 34px;
+                float: right;
+                color: $rockstars-color2;
+                opacity: 0.7;
+                
+            }
+            .table-responsive{
+                width: auto;
+                padding: 0px;
+                margin-left: 15px;
+                margin-right: 15px;
+            }
+            .search-box{
+                margin-top: 10px;
+            }
+            .search-box.show-search-box{
+                display: block;
+            }
+            .search-box.hide-search-box{
+                display: none;
+            }
+            .action-column{
+                width: 100px;
+            }
+        }
+    }
+
 
     //PAGING
     .pagination > li > a,
@@ -259,7 +449,7 @@ body{
         color: white;
     }
 
-    #userForm, #congiguration{
+    #userForm, #groupForm, #congiguration{
         .list-group-item{
             border: none;
             padding-left: 0px;
@@ -385,12 +575,14 @@ body{
         
         .column-60{
             width: 60px;
+            min-width: 60px;
         }
     }
 
     .table > tbody > tr > td,
     .table > thead > tr > th{
         position: relative;
+        white-space: nowrap;
     }
 
     .cover-checkbox{

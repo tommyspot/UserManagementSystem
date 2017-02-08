@@ -10,18 +10,23 @@
                         <option value="99999">All</option>
                     </select>
                 </span>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.directToGroupForm()"
+                <button type="button" class="btn btn-default button-xs" data-ng-click="viewModel.directToGroupForm()"
                     data-ng-if="viewModel.authenticationService.hasEditorPermission()">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    <span>Add Group</span>
+                    <span class="glyphicon glyphicon-plus glyphicon-xs"></span>
+                    <span class="hidden-xs">Add Group</span>
                 </button>
-                <button type="button" class="btn btn-default" data-ng-click="viewModel.removeGroup()"
+                <button type="button" class="btn btn-default button-xs" data-ng-click="viewModel.removeGroup()"
                     data-ng-if="viewModel.authenticationService.hasEditorPermission()">
-                    <span class="glyphicon glyphicon-trash"></span>
-                    <span>Remove Group</span>
+                    <span class="glyphicon glyphicon-trash glyphicon-xs"></span>
+                    <span class="hidden-xs">Remove Group</span>
                 </button>
+
+                <span class="glyphicon glyphicon-search glyphicon-xs hidden-sm hidden-md hidden-lg" data-ng-click="showSearchBox = !showSearchBox"></span>
+                <input class="form-control search-box hidden-sm hidden-md hidden-lg" type="text" data-ng-class="{'show-search-box': showSearchBox, 'hide-search-box': !showSearchBox}"
+                    data-ng-change="viewModel.filterGroupList(searchText)" data-ng-model="searchText" placeholder="Search" />
+
             </div>
-            <div class="col-md-3 col-sm-3 search-section">
+            <div class="col-md-3 col-sm-3 search-section hidden-xs">
                 <input class="form-control search-box" type="text" data-ng-change="viewModel.filterGroupList(searchText)" data-ng-model="searchText" placeholder="Search" />
             </div>
         </div>
@@ -37,7 +42,7 @@
                                 </label>
                             </th>
                             <th class="align-center">Name</th>
-                            <th class="align-center" style="width: 250px;"
+                            <th class="align-center action-column"
                                 data-ng-if="viewModel.authenticationService.hasEditorPermission()">Action</th>
                         </tr>
                     </thead>
@@ -50,11 +55,8 @@
                             </td>
                             <td class="align-center">{{group.name}}</td>
                             <td class="align-center" data-ng-if="viewModel.authenticationService.hasEditorPermission()">
-                                <button class="btn btn-default" ng-click="viewModel.$location.path('/group/edit/' + group._id)">
-                                    <span class="glyphicon glyphicon-edit"></span><span>&nbsp;Edit</span>
-                                </button>
-                                <button class="btn btn-default" ng-click="viewModel.removeOneGroup(group)">
-                                    <span class="glyphicon glyphicon-remove"></span><span>&nbsp;Remove</span>
+                                <button class="btn btn-default button-xs" ng-click="viewModel.$location.path('/group/edit/' + group._id)">
+                                    <span class="glyphicon glyphicon-edit glyphicon-xs"></span><span class="hidden-xs">&nbsp;Edit</span>
                                 </button>
                             </td>
                         </tr>

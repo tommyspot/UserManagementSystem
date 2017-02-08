@@ -1,10 +1,9 @@
 <html>
     <head>
         <title>User Management System</title>
-        <!--<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="css/custom.css">
         <link rel="stylesheet" type="text/css" href="css/angular-datepicker.css">
-
     </head>
 
     <body ng-app="myApp" id="myApp">
@@ -13,15 +12,22 @@
             <nav id="navigation" class="navbar navbar-default" ng-controller="NavigationController">
                 <div class="container">
                     <div class="nav-header">
-                        <a href="#" class="navbar-brand logo hidden-xs" data-ng-click="viewModel.nav.selectedIndex = 0;">
+                        <a href="#" class="navbar-brand logo" data-ng-click="viewModel.nav.selectedIndex = 0;">
                             <img class="logo-img" src="img/logo.png" /></a>
-                        
-                        <ul class="nav navbar-nav">
+
+                        <a class="menu-icon pointer" data-ng-click="viewModel.showMenu = !viewModel.showMenu;">☰</a>
+
+                        <ul class="nav navbar-nav" data-ng-class="{'show-menu': viewModel.showMenu, 'hidden-menu': !viewModel.showMenu}">
                             <li ng-repeat="navLink in viewModel.nav.navItems" ng-class="{active : $index === viewModel.nav.selectedIndex}">
                                 <a class="text-nav" ng-click="viewModel.nav.navClick($index)" ng-href="#/{{navLink}}">{{navLink}}</a>
                             </li>
+
+                            <li class="log-out-xs pointer">
+                                <a data-ng-click="viewModel.authentication.logOut()">Log out</a>
+                            </li>
                         </ul>
-                        <a class="navbar-log-out pointer" data-ng-click="viewModel.authentication.logOut()">
+
+                        <a class="navbar-log-out pointer" data-ng-click="viewModel.authentication.logOut()" >
                             <span class="glyphicon glyphicon-log-out log-out-icon"></span>
                         </a>
                     </div>
@@ -40,6 +46,5 @@
         <script src='js/lib/datepicker/angular-datepicker.min.js'></script>
         <script src="js/output.js"></script>    
         <script src="js/app.js"></script>
-
     </body>
 </html>

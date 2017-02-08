@@ -73,6 +73,7 @@ var Rockstars;
     })(Model = Rockstars.Model || (Rockstars.Model = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../lib/pouchdb/index.d.ts" />
 /// <reference path="../lib/pouchdb/pouch.d.ts" />
 /// <reference path="../model/BaseModel.ts" />
@@ -236,6 +237,8 @@ var Rockstars;
         Service.PouchDBService = PouchDBService;
     })(Service = Rockstars.Service || (Rockstars.Service = {}));
 })(Rockstars || (Rockstars = {}));
+/// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../model/BaseModel.ts" />
 /// <reference path="../model/UserModel.ts" />
 /// <reference path="../model/GroupModel.ts" />
@@ -264,6 +267,9 @@ var Rockstars;
                         if (user.password === userLogin.password
                             && (user.userName.toLowerCase() === userLogin.identifier.toLowerCase() || user.email.toLowerCase() === userLogin.identifier.toLowerCase())) {
                             if (userLogin.isRememberMe) {
+                                if (_this.$cookies.get('expireTime')) {
+                                    _this.$cookies.remove('expireTime');
+                                }
                                 _this.$cookies.putObject('user', user);
                             }
                             else {
@@ -358,7 +364,7 @@ var Rockstars;
                 this.initPage();
             }
             ConfigurationController.prototype.initPage = function () {
-                this.expireTime = parseInt(this.$cookies.get('expireTime'));
+                this.expireTime = this.$cookies.get('expireTime') ? parseInt(this.$cookies.get('expireTime')) : null;
                 this.dbURL = this.$cookies.get('dbURL');
             };
             ConfigurationController.prototype.saveConfig = function () {
@@ -370,14 +376,16 @@ var Rockstars;
                 this.$cookies.put('dbURL', this.dbURL);
             };
             ConfigurationController.prototype.updateExpireTime = function () {
-                var userLogin = this.$cookies.getObject('user');
-                this.$cookies.remove('user');
-                this.$cookies.remove('expireTime');
-                this.$cookies.put('expireTime', this.expireTime.toString());
-                var toDay = new Date().getTime();
-                var expireDate = new Date(toDay + this.expireTime);
-                var option = { 'expires': expireDate };
-                this.$cookies.putObject('user', userLogin, option);
+                if (this.expireTime) {
+                    var userLogin = this.$cookies.getObject('user');
+                    this.$cookies.remove('user');
+                    this.$cookies.remove('expireTime');
+                    this.$cookies.put('expireTime', this.expireTime.toString());
+                    var toDay = new Date().getTime();
+                    var expireDate = new Date(toDay + this.expireTime);
+                    var option = { 'expires': expireDate };
+                    this.$cookies.putObject('user', userLogin, option);
+                }
             };
             return ConfigurationController;
         }());
@@ -607,6 +615,7 @@ var Rockstars;
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/angularjs/angular-cookies.d.ts" />
+/// <reference path="../services/AuthenticationService.ts" />
 var Rockstars;
 (function (Rockstars) {
     var Controller;
@@ -629,6 +638,7 @@ var Rockstars;
                         selectedIndex: this.$location.path() === '/user' ? 0 : (this.$location.path() === '/group' ? 1 : 2),
                         navClick: function ($index) {
                             _this.nav.selectedIndex = $index;
+                            _this.showMenu = false;
                         }
                     };
                 }
@@ -638,6 +648,7 @@ var Rockstars;
                         selectedIndex: this.$location.path() === '/user' ? 0 : 1,
                         navClick: function ($index) {
                             _this.nav.selectedIndex = $index;
+                            _this.showMenu = false;
                         }
                     };
                 }

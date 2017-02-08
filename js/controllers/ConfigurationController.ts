@@ -24,8 +24,8 @@ module Rockstars.Controller {
       this.initPage();
     }
 
-    initPage(){
-      this.expireTime = parseInt(this.$cookies.get('expireTime'));
+    initPage() {
+      this.expireTime = this.$cookies.get('expireTime') ? parseInt(this.$cookies.get('expireTime')) : null;
       this.dbURL = this.$cookies.get('dbURL');
     }
 
@@ -34,21 +34,23 @@ module Rockstars.Controller {
       this.updateExpireTime();
     }
 
-    updateDbURL(){
+    updateDbURL() {
       this.$cookies.remove('dbURL');
       this.$cookies.put('dbURL', this.dbURL);
     }
 
-    updateExpireTime(){
-      var userLogin = this.$cookies.getObject('user');
-      this.$cookies.remove('user');
-      this.$cookies.remove('expireTime');
-      this.$cookies.put('expireTime', this.expireTime.toString());
+    updateExpireTime() {
+      if (this.expireTime) {
+        var userLogin = this.$cookies.getObject('user');
+        this.$cookies.remove('user');
+        this.$cookies.remove('expireTime');
+        this.$cookies.put('expireTime', this.expireTime.toString());
 
-      var toDay = new Date().getTime();
-      var expireDate = new Date(toDay + this.expireTime);
-      var option = {'expires': expireDate};
-      this.$cookies.putObject('user', userLogin, option);
+        var toDay = new Date().getTime();
+        var expireDate = new Date(toDay + this.expireTime);
+        var option = { 'expires': expireDate };
+        this.$cookies.putObject('user', userLogin, option);
+      }
     }
 
   }

@@ -1,4 +1,5 @@
 /// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../lib/pouchdb/index.d.ts" />
 /// <reference path="../lib/pouchdb/pouch.d.ts" />
 /// <reference path="../model/BaseModel.ts" />
@@ -89,7 +90,7 @@ module Rockstars.Service {
 		updateEntity(entityInfo: Model.BaseModel) {
 			var defer = this.$q.defer();
 
-			this.database.get(entityInfo._id).then(doc => {
+			this.database.get(entityInfo._id).then((doc:any)  => {
 				
 				if (entityInfo.type === Enum.EntityType.User) {
 					let entity = <Model.UserModel>entityInfo;
@@ -121,10 +122,10 @@ module Rockstars.Service {
 					});
 				}
 
-			}).then(function (result) {
+			}).then(function (result: any) {
 				// handle response
 				defer.resolve(result);
-			}).catch(function (reason) {
+			}).catch(function (reason: any) {
 				//console.log(reason);
 				defer.reject(reason);
 			});

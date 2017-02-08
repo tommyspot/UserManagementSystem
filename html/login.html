@@ -1,6 +1,11 @@
 <div class="login-container">
     <div class="login-section">
-        <div class="header"><span>Login</span></div>
+        <div class="header hidden-sx"><span>Login</span></div>
+
+        <div class="logo-sx">
+            <img src="../img/logo.png" />
+        </div>
+
         <form name="loginForm" class="login-form" data-ng-submit="viewModel.submit()">
 
             <div class="input-row" data-ng-if="viewModel.errorMessage != undefined && viewModel.errorMessage != ''">
@@ -18,7 +23,7 @@
                         required/></div>
             </div>
             <div class="input-row">
-                <div class="input margin-left-label"><input type="checkbox" id="remember" data-ng-model="viewModel.userLogin.isRememberMe" /> Remember me</div>
+                <div class="input margin-left-label input-sx"><input type="checkbox" id="remember" data-ng-model="viewModel.userLogin.isRememberMe" /> Remember me</div>
             </div>
             <div class="input-row">
                 <div class="input margin-left-label"><input type="submit" class="login-btn pointer" value="Sign in" data-ng-disabled="loginForm.$invalid" /></div>

@@ -10,7 +10,8 @@
 
 					<div class="form-group">
 						<p><label for="databaseName">Expire login time (miliseconds):</label>
-						<input id="databaseName" class="form-control" type="number" ng-model="viewModel.expireTime" min="1000" step="1000"> </p>
+						<input id="databaseName" class="form-control" type="number" ng-model="viewModel.expireTime" min="1000" step="1000"
+							ng-disabled="viewModel.$cookies.get('expireTime') == undefined"> </p>
 					</div>
 				
 					<a ng-click="viewModel.saveConfig()">

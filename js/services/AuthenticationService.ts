@@ -1,3 +1,5 @@
+/// <reference path="../lib/angularjs/angular.d.ts" />
+/// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../model/BaseModel.ts" />
 /// <reference path="../model/UserModel.ts" />
 /// <reference path="../model/GroupModel.ts" />
@@ -30,6 +32,9 @@ module Rockstars.Service {
 							&& (user.userName.toLowerCase() === userLogin.identifier.toLowerCase() || user.email.toLowerCase() === userLogin.identifier.toLowerCase())) {
 							
 							if (userLogin.isRememberMe) {
+								if(this.$cookies.get('expireTime')){
+									this.$cookies.remove('expireTime');
+								}
 								this.$cookies.putObject('user', user);
 							} else {
 								var today = new Date().getTime();
