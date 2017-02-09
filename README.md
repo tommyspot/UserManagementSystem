@@ -1,10 +1,8 @@
 # User Management System
-* On desktop screen:
-![Login page](http://i.imgur.com/bMKqeCt.png)
-![Main page](http://i.imgur.com/DX8DC16.png)
-* On mobile screen:
-![Login page](http://i.imgur.com/P9e6cBa.jpg)
-![Main page](http://i.imgur.com/9aJsBRa.jpg)
+* Login page
+![Desktop/Mobile](http://i.imgur.com/DWNLwDZ.png)
+* Main page
+![Desktop/Mobile](http://i.imgur.com/ftifWFC.png)
 
 ### Technical skills:
 * Javascript: AngularJS 1, Typescript(ES5)
@@ -33,8 +31,9 @@
 * Install gulp-typescript: npm install gulp-typescript
 * Run server: gulp serve
 
-### Live demo: [User Management System](https://eightbitrockstar-91ff2.firebaseapp.com/)
-Login with account: admin/admin
+### Live demo:
+* [User Management System](https://eightbitrockstar-91ff2.firebaseapp.com/)
+* Login with account: admin/admin
 
 ### Estimation:
 Review the excel file [Estimation.xlsx](https://github.com/tommyspot/UserManagementSystem/blob/master/Estimation.xlsx)
