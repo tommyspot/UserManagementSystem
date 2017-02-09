@@ -1,8 +1,8 @@
 # User Management System
 
-* Login page
+##### Login page:
 ![Desktop/Mobile](http://i.imgur.com/DWNLwDZ.png)
-* Main page
+##### Main page:
 ![Desktop/Mobile](http://i.imgur.com/ftifWFC.png)
 
 ### Technical skills:
