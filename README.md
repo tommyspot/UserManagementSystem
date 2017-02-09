@@ -6,7 +6,7 @@
 ![Desktop/Mobile](http://i.imgur.com/ftifWFC.png)
 
 ### Technical skills:
-* Javascript: AngularJS 1, Typescript(ES5)
+* Javascript: AngularJS 1, Typescript(ES6)
 * CSS: SASS, Bootstrap 3 framework
 * Database: PouchDB
 * Task runner: Gulp (compile SASS, TypeScript, compress JavaScript files, create host on local)
