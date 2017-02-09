@@ -24,7 +24,7 @@ module Rockstars.Controller {
       if (this.authentication.hasAdminPermission()) {
         this.nav = {
           navItems: ['user', 'group', 'configuration'],
-          selectedIndex: this.$location.path() === '/user' ? 0 : (this.$location.path() === '/group' ? 1 : 2),
+          selectedIndex: this.$location.path().indexOf('/user') > -1 ? 0 : this.$location.path().indexOf('/group') > -1 ? 1 : 2,
           navClick: ($index: number) => {
             this.nav.selectedIndex = $index;
             this.showMenu = false;

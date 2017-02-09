@@ -49,7 +49,8 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', '720kb.datepicker']
 			})
 			.when('/configuration', {
 			  templateUrl: '/html/configuration.html',
-			  controller: 'ConfigurationController'
+			  controller: 'ConfigurationController',
+			  access: 'auth'
 			})
 			.otherwise({ redirectTo: '/login' });
 	});
@@ -86,6 +87,11 @@ myApp.run(function ($rootScope, $routeParams, $location, AuthenticationService) 
 				if (!AuthenticationService.hasEditorPermission()) {
 					if (next.originalPath === '/user/add' || next.originalPath === '/user/edit/:user_id'
 						|| next.originalPath === '/group/add' || next.originalPath === '/group/edit/:group_id') {
+						$location.path('/access_denied');
+					}
+				}
+				if(!AuthenticationService.hasAdminPermission()){
+					if (next.originalPath === '/configuration') {
 						$location.path('/access_denied');
 					}
 				}

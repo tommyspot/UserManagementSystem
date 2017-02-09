@@ -5,18 +5,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Rockstars;
 (function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var BaseModel = (function () {
-            function BaseModel() {
-            }
-            return BaseModel;
-        }());
-        Model.BaseModel = BaseModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
     var Enum;
     (function (Enum) {
         var EntityType;
@@ -31,6 +19,72 @@ var Rockstars;
             UserRole[UserRole["View"] = 2] = "View";
         })(UserRole = Enum.UserRole || (Enum.UserRole = {}));
     })(Enum = Rockstars.Enum || (Rockstars.Enum = {}));
+})(Rockstars || (Rockstars = {}));
+/// <reference path="../model/Enum.ts" />
+var Rockstars;
+(function (Rockstars) {
+    var Helper;
+    (function (Helper) {
+        var ModelHelper = (function () {
+            function ModelHelper(userList, groupList) {
+                this.userList = userList;
+                this.groupList = groupList;
+            }
+            ModelHelper.prototype.getUserRole = function (role) {
+                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
+                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
+            };
+            ModelHelper.prototype.formatCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
+            };
+            ModelHelper.prototype.formatShortCreatedDate = function (date) {
+                var dateObject = new Date(date);
+                return dateObject.toDateString();
+            };
+            ModelHelper.prototype.getGroupName = function (_id) {
+                if (this.groupList && this.groupList.length > 0) {
+                    for (var index = 0; index < this.groupList.length; index++) {
+                        var group = this.groupList[index];
+                        if (group._id === _id) {
+                            return group.name;
+                        }
+                    }
+                }
+                return '';
+            };
+            return ModelHelper;
+        }());
+        Helper.ModelHelper = ModelHelper;
+    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var BaseModel = (function () {
+            function BaseModel() {
+            }
+            return BaseModel;
+        }());
+        Model.BaseModel = BaseModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
+})(Rockstars || (Rockstars = {}));
+var Rockstars;
+(function (Rockstars) {
+    var Model;
+    (function (Model) {
+        var GroupModel = (function (_super) {
+            __extends(GroupModel, _super);
+            function GroupModel() {
+                var _this = _super.call(this) || this;
+                _this.type = Rockstars.Enum.EntityType.Group;
+                return _this;
+            }
+            return GroupModel;
+        }(Model.BaseModel));
+        Model.GroupModel = GroupModel;
+    })(Model = Rockstars.Model || (Rockstars.Model = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../model/BaseModel.ts" />
 /// <reference path="../model/Enum.ts" />
@@ -54,22 +108,6 @@ var Rockstars;
             return UserLoginModel;
         }());
         Model.UserLoginModel = UserLoginModel;
-    })(Model = Rockstars.Model || (Rockstars.Model = {}));
-})(Rockstars || (Rockstars = {}));
-var Rockstars;
-(function (Rockstars) {
-    var Model;
-    (function (Model) {
-        var GroupModel = (function (_super) {
-            __extends(GroupModel, _super);
-            function GroupModel() {
-                var _this = _super.call(this) || this;
-                _this.type = Rockstars.Enum.EntityType.Group;
-                return _this;
-            }
-            return GroupModel;
-        }(Model.BaseModel));
-        Model.GroupModel = GroupModel;
     })(Model = Rockstars.Model || (Rockstars.Model = {}));
 })(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
@@ -392,44 +430,6 @@ var Rockstars;
         Controller.ConfigurationController = ConfigurationController;
     })(Controller = Rockstars.Controller || (Rockstars.Controller = {}));
 })(Rockstars || (Rockstars = {}));
-/// <reference path="../model/Enum.ts" />
-var Rockstars;
-(function (Rockstars) {
-    var Helper;
-    (function (Helper) {
-        var ModelHelper = (function () {
-            function ModelHelper(userList, groupList) {
-                this.userList = userList;
-                this.groupList = groupList;
-            }
-            ModelHelper.prototype.getUserRole = function (role) {
-                return role === Rockstars.Enum.UserRole.Admin ? 'Admin' :
-                    (role === Rockstars.Enum.UserRole.Editor ? 'Editor' : 'View');
-            };
-            ModelHelper.prototype.formatCreatedDate = function (date) {
-                var dateObject = new Date(date);
-                return dateObject.toDateString() + ' ' + dateObject.toLocaleTimeString();
-            };
-            ModelHelper.prototype.formatShortCreatedDate = function (date) {
-                var dateObject = new Date(date);
-                return dateObject.toDateString();
-            };
-            ModelHelper.prototype.getGroupName = function (_id) {
-                if (this.groupList && this.groupList.length > 0) {
-                    for (var index = 0; index < this.groupList.length; index++) {
-                        var group = this.groupList[index];
-                        if (group._id === _id) {
-                            return group.name;
-                        }
-                    }
-                }
-                return '';
-            };
-            return ModelHelper;
-        }());
-        Helper.ModelHelper = ModelHelper;
-    })(Helper = Rockstars.Helper || (Rockstars.Helper = {}));
-})(Rockstars || (Rockstars = {}));
 /// <reference path="../lib/angularjs/angular.d.ts" />
 /// <reference path="../lib/angularjs/angular-cookies.d.ts" />
 /// <reference path="../model/UserModel.ts" />
@@ -635,7 +635,7 @@ var Rockstars;
                 if (this.authentication.hasAdminPermission()) {
                     this.nav = {
                         navItems: ['user', 'group', 'configuration'],
-                        selectedIndex: this.$location.path() === '/user' ? 0 : (this.$location.path() === '/group' ? 1 : 2),
+                        selectedIndex: this.$location.path().indexOf('/user') > -1 ? 0 : this.$location.path().indexOf('/group') > -1 ? 1 : 2,
                         navClick: function ($index) {
                             _this.nav.selectedIndex = $index;
                             _this.showMenu = false;
